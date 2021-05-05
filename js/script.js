@@ -271,6 +271,8 @@ class TetrisGame {
     this.board.clearFullRows();
     this.fullRowsNum = this.board.fullRowsNum;
     if(this.fullRowsNum) {
+      this.context.clearRect(0, 0, this.context.canvas.width, this.context.canvas.height); 
+      this.board.activeTetramino.draw();
       this.board.drawBoardGrid();
       this.updateScore();
       this.updateLavel();
@@ -303,7 +305,6 @@ class TetrisGame {
         this.updateGame(this.newPosition);
       } else {
         if (this.board.activeTetramino.y === -1 || this.board.activeTetramino.y === -2) {
-          console.log(this.board.activeTetramino);
           this.endGame();
           return;
         } else {
