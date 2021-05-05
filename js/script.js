@@ -216,6 +216,11 @@ class TetrisGame {
     this.fullRowsNum = 0;
     this.scoreElem = document.querySelector('.score');
     this.onPause = false;
+    this.lavel = 1;
+    this.set = {
+      1 : 1
+    }
+
 
     if(this.playBtn) {
       this.playBtn.addEventListener('click', () => {
@@ -257,6 +262,8 @@ class TetrisGame {
   startPlay() {
     cancelAnimationFrame(this.gameReq);
     this.onPause = false;
+    this.lavel = 1;
+    this.score = 0;
     this.gameOver.classList.remove('game-over-active');
     this.gameReq = null;
     this.count = 0;
@@ -279,7 +286,7 @@ class TetrisGame {
         this.updateScore();
       } else {
         if (this.board.activeTetramino.y === -1) {
-          this.finishRound();
+          this.endGame();
           return;
         } else {
           this.board.saveSett();
@@ -293,7 +300,7 @@ class TetrisGame {
     });
   }
 
-  finishRound() {
+  endGame() {
     this.gameOver.classList.add('game-over-active');
     this.score = 0;
   }
@@ -314,9 +321,11 @@ class TetrisGame {
     if(!this.onPause) {
       this.board.activeTetramino.speedY = 0;
       this.onPause = true;
+      this.pauseBtn.innerHTML = 'Resume';
     } else {
       this.board.activeTetramino.speedY = 1;
       this.onPause = false;
+      this.pauseBtn.innerHTML = 'Pause';
     }
   }
 
