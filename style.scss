@@ -91,7 +91,6 @@ body {
 
 .buttons {
   display: flex;
-  // justify-content: center;
   flex-direction: column;
   flex: 0 0 200px;
   padding-right: 30px;
@@ -108,10 +107,19 @@ body {
   border-radius: 5px;
   outline: none;
   border: none;
+  cursor: pointer;
 }
 
 .recordes {
   font-size: 18px;
 }
 
+.score {
+ transition: all 0.5s ease-out;
+}
+
+.active-score {
+  color: rgb(255, 202, 57);
+  transform: scale(2);
+}
 

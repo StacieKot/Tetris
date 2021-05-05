@@ -111,8 +111,20 @@ body {
   border-radius: 5px;
   outline: none;
   border: none;
+  cursor: pointer;
 }
 
 .recordes {
   font-size: 18px;
+}
+
+.score {
+  -webkit-transition: all 0.5s ease-out;
+  transition: all 0.5s ease-out;
+}
+
+.active-score {
+  color: #ffca39;
+  -webkit-transform: scale(2);
+          transform: scale(2);
 }

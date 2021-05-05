@@ -60,6 +60,7 @@ class Board {
     this.image.width = 40;
     this.image.height = 40;
     this.fullRowsNum = 0;
+    this.newRow = Array.from(Array(boardSettings.columns).fill(0));
   }
 
   reset() {
@@ -126,11 +127,14 @@ class Board {
   clearFullRows() {
     const fullRows = this.getFullRows();
     this.fullRowsNum = fullRows.length;
-    fullRows.forEach( value => {
-      this.grid.splice(value, 1);
-      this.grid.unshift(Array.from(Array(boardSettings.columns).fill(0)));
-    });
-    console.log(this.fullRowsNum);
+    if(this.fullRowsNum) {
+      // console.time('label');
+      fullRows.forEach( value => {
+        this.grid.splice(value, 1);
+        this.grid.unshift(this.newRow);
+      });
+      // console.timeEnd('label');
+    }
   }
 
   clearFullRowsNum() {
@@ -292,9 +296,12 @@ class TetrisGame {
 
   updateScore() {
     this.fullRows = this.board.fullRowsNum;
-    this.score += Math.sqrt(this.fullRows)*this.point;
-    this.scoreElem.innerHTML = this.score;
-    console.log(this.score);
+    this.score += this.fullRows*this.point*this.fullRows;
+    if(this.fullRows) {
+      this.scoreElem.innerHTML = this.score;
+      this.scoreElem.classList.add('active-score');
+      setInterval( () =>  this.scoreElem.classList.remove('active-score'), 500);
+    }
   }
 
 }
