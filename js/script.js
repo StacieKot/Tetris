@@ -1,7 +1,7 @@
 'use strict'
 const boardSettings = {
   columns : 10,
-  rows : 21,
+  rows : 20,
   blockSize : 35
 }
 
@@ -80,7 +80,7 @@ class Board {
       return row.every( (value, shapeX) => {
         const currX = pos.x + shapeX;
         const currY = pos.y + shapeY;
-        return value === 0 || (this.horizValid(currX) && this.verticalValid(currY) && this.isFree(currX, currY));
+        return value === 0 || currY < 0 ||  (this.horizValid(currX) && this.verticalValid(currY) && this.isFree(currX, currY));
       })
     })
   }
@@ -148,7 +148,7 @@ class Tetramino {
       [[7, 7, 0], [0, 7, 7], [0, 0, 0]]
     ];
     this.colors = colors;
-    this.y = -1;
+    this.y = -2;
     this.x = 0;
     this.speedX = 1;
     this.speedY = 1;
@@ -221,7 +221,6 @@ class TetrisGame {
       1 : 1
     }
 
-
     if(this.playBtn) {
       this.playBtn.addEventListener('click', () => {
         this.startPlay();
@@ -262,6 +261,7 @@ class TetrisGame {
   startPlay() {
     cancelAnimationFrame(this.gameReq);
     this.onPause = false;
+    this.pauseBtn.innerHTML = 'Pause';
     this.lavel = 1;
     this.score = 0;
     this.gameOver.classList.remove('game-over-active');
@@ -285,12 +285,15 @@ class TetrisGame {
         this.board.clearFullRows();
         this.updateScore();
       } else {
-        if (this.board.activeTetramino.y === -1) {
+        if (this.board.activeTetramino.y === -1 || this.board.activeTetramino.y === -2) {
+          console.log(this.board.activeTetramino);
+          // this.board.activeTetramino.draw();
           this.endGame();
           return;
         } else {
           this.board.saveSett();
           this.createNewTetramino();
+          console.log(this.board.activeTetramino.y);
         }
       }
     }
