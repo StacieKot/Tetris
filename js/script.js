@@ -257,19 +257,23 @@ class TetrisGame {
   moveTetramino(event) {
     if(!this.moves[event.code] || this.onPause) return;
     event.preventDefault();
-    const newPosition = this.moves[event.code](this.board.activeTetramino);
-    if (this.board.validatePos(newPosition)) {
-      this.board.activeTetramino.updatePos(newPosition);
-      this.context.clearRect(0, 0, this.context.canvas.width, this.context.canvas.height); 
-      this.board.activeTetramino.draw();
+    this.newPosition = this.moves[event.code](this.board.activeTetramino);
+    if (this.board.validatePos(this.newPosition)) {
+      this.updateGame(this.newPosition);
+    }
+  }
+
+  updateGame(pos) {
+    this.board.activeTetramino.updatePos(pos);
+    this.context.clearRect(0, 0, this.context.canvas.width, this.context.canvas.height); 
+    this.board.activeTetramino.draw();
+    this.board.drawBoardGrid();
+    this.board.clearFullRows();
+    this.fullRowsNum = this.board.fullRowsNum;
+    if(this.fullRowsNum) {
       this.board.drawBoardGrid();
-      this.board.clearFullRows();
-      this.fullRowsNum = this.board.fullRowsNum;
-      if(this.fullRowsNum) {
-        this.board.drawBoardGrid();
-        this.updateScore();
-        this.updateLavel();
-      }
+      this.updateScore();
+      this.updateLavel();
     }
   }
 
@@ -280,7 +284,7 @@ class TetrisGame {
     this.pauseBtn.innerHTML = 'Pause';
     this.lavel = 1;
     this.score = 0;
-    this.timer = 35;
+    this.timer = 32;
     this.scoreElem.innerHTML = this.score;
     this.lavelElem.innerHTML = this.lavel;
     this.gameOver.classList.remove('game-over-active');
@@ -294,20 +298,9 @@ class TetrisGame {
   animateGame() {
     if (this.count === this.timer) {
       this.count = 0;
-      console.log(this.count);
       this.newPosition = this.moves['ArrowDown'](this.board.activeTetramino);
       if (board.validatePos(this.newPosition)) {
-        this.board.activeTetramino.updatePos(this.newPosition);
-        this.context.clearRect(0, 0, this.context.canvas.width, this.context.canvas.height); 
-        this.board.activeTetramino.draw();
-        this.board.drawBoardGrid();
-        this.board.clearFullRows();
-        this.fullRowsNum = this.board.fullRowsNum;
-        if(this.fullRowsNum) {
-          this.board.drawBoardGrid();
-          this.updateScore();
-          this.updateLavel();
-        }
+        this.updateGame(this.newPosition);
       } else {
         if (this.board.activeTetramino.y === -1 || this.board.activeTetramino.y === -2) {
           console.log(this.board.activeTetramino);
@@ -340,7 +333,7 @@ class TetrisGame {
   }
 
   updateLavel() {
-    this.progress = Math.floor(this.score / 300);
+    this.progress = Math.floor(this.score / 500);
     if (this.progress > this.lavel) {
       this.lavel = this.progress;
       this.lavelElem.innerHTML = this.lavel;
