@@ -1,0 +1,117 @@
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+// font-family: 'Press Start 2P', cursive;
+body {
+  margin: 0;
+  font-family: 'Press Start 2P', cursive;
+  font-size: 24px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+.container {
+  background: url(assets/background.png);
+  background-size: cover;
+  min-height: 100vh;
+}
+
+.game-wrapper {
+  display: flex;
+  justify-content: center;
+  position: relative;
+  padding-top: calc((100vh - 785px) / 2);
+  // padding: 20px;
+  // border-radius: 10px;
+ 
+  // border: yellowgreen 3px solid;
+
+}
+
+.tetris {
+  padding: 20px;
+  border-radius: 10px;
+  position: relative;
+  background: linear-gradient(rgba(66,15,92, 0.7), rgba(33,80,162, 0.7));
+  box-shadow: 5px 5px 25px -5px #FF8080, 
+              -5px 5px 25px -5px #FFE488, 
+              -5px -5px 25px -5px #8CFF85, 
+              5px -5px 25px -5px #80C7FF, 
+              5px 5px 25px -5px #E488FF, 
+              -5px 5px 25px -5px #FF616B, 
+              -5px -5px 25px -5px #8E5CFF, 
+              5px 5px 15px 0px rgba(0,0,0,0);
+ 
+
+}
+
+.game-area {
+  // border: blueviolet 2px solid;
+  box-shadow: inset 1px 0px 29px 5px rgba(0,0,0,0.54);
+  // background-color: #3a206a;
+  
+}
+
+
+.game-over {
+  font-size: 36px;
+  color: rgb(255, 202, 57);
+  position: absolute;
+  visibility: hidden;
+  transform: scale(0);
+  transition: transform 0.5s ease-out;
+  text-align: center;
+  left: 0;
+  right: 0;
+  top: 40%;
+}
+
+.game-over-active {
+  transition: transform 0.5s ease-out;
+  visibility: visible;
+  transform: scale(1);
+}
+
+.info {
+  flex: 0 0 200px;
+
+  .output {
+    text-align: center;
+    padding: 10px 10px 30px 10px;
+    color: white;
+
+    >div{
+      margin-bottom: 20px;
+    }
+
+  }
+ 
+}
+
+.buttons {
+  display: flex;
+  // justify-content: center;
+  flex-direction: column;
+  flex: 0 0 200px;
+  padding-right: 30px;
+}
+
+.btn {
+  background: linear-gradient(#08b15f, rgba(33,80,162, 1));
+  font-family: 'Press Start 2P', cursive;
+  font-size: 20px;
+  color: white;
+  display: block;
+  margin-bottom: 20px;
+  padding: 15px 25px;
+  border-radius: 5px;
+  outline: none;
+  border: none;
+}
+
+.recordes {
+  font-size: 18px;
+}
+
+
