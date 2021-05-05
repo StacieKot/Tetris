@@ -211,15 +211,23 @@ class TetrisGame {
     this.tetram = null;
     this.gameReq = null;
     this.count = 0;
+    this.timer = null;
     this.score = 0;
     this.point = 100;
     this.fullRowsNum = 0;
     this.scoreElem = document.querySelector('.score');
+    this.lavelElem = document.querySelector('.lavel');
     this.onPause = false;
     this.lavel = 1;
-    this.set = {
-      1 : 1
-    }
+    this.lavelSpeedY = 0;
+    this.progress = null;
+    this.moves = {
+      [keyEvent.left]:  tetr => ({ ...tetr, x: tetr.x - tetr.speedX }),
+      [keyEvent. right]: tetr => ({ ...tetr, x: tetr.x + tetr.speedX }),
+      [keyEvent.down]: tetr => ({ ...tetr, y: tetr.y + tetr.speedY}),
+      [keyEvent.rotate]: tetr => board.activeTetramino.rotateMatrix(tetr),
+      // [keyEvent.fastdDown]: tetr => ({ ...tetr, y: tetr.y + 2 })
+    };
 
     if(this.playBtn) {
       this.playBtn.addEventListener('click', () => {
@@ -247,25 +255,35 @@ class TetrisGame {
   }
 
   moveTetramino(event) {
-    if(!moves[event.code] || this.onPause) return;
-    const newPosition = moves[event.code](this.board.activeTetramino);
+    if(!this.moves[event.code] || this.onPause) return;
+    event.preventDefault();
+    const newPosition = this.moves[event.code](this.board.activeTetramino);
     if (this.board.validatePos(newPosition)) {
       this.board.activeTetramino.updatePos(newPosition);
       this.context.clearRect(0, 0, this.context.canvas.width, this.context.canvas.height); 
       this.board.activeTetramino.draw();
       this.board.drawBoardGrid();
       this.board.clearFullRows();
+      this.fullRowsNum = this.board.fullRowsNum;
+      if(this.fullRowsNum) {
+        this.board.drawBoardGrid();
+        this.updateScore();
+        this.updateLavel();
+      }
     }
   }
 
   startPlay() {
     cancelAnimationFrame(this.gameReq);
+    this.gameReq = null;
     this.onPause = false;
     this.pauseBtn.innerHTML = 'Pause';
     this.lavel = 1;
     this.score = 0;
+    this.timer = 35;
+    this.scoreElem.innerHTML = this.score;
+    this.lavelElem.innerHTML = this.lavel;
     this.gameOver.classList.remove('game-over-active');
-    this.gameReq = null;
     this.count = 0;
     this.board.reset();
     this.context.clearRect(0, 0, this.context.canvas.width, this.context.canvas.height); 
@@ -274,20 +292,25 @@ class TetrisGame {
   }
 
   animateGame() {
-    if (this.count === 35) {
+    if (this.count === this.timer) {
       this.count = 0;
-      this.newPosition = moves['ArrowDown'](this.board.activeTetramino);
+      console.log(this.count);
+      this.newPosition = this.moves['ArrowDown'](this.board.activeTetramino);
       if (board.validatePos(this.newPosition)) {
         this.board.activeTetramino.updatePos(this.newPosition);
         this.context.clearRect(0, 0, this.context.canvas.width, this.context.canvas.height); 
         this.board.activeTetramino.draw();
         this.board.drawBoardGrid();
         this.board.clearFullRows();
-        this.updateScore();
+        this.fullRowsNum = this.board.fullRowsNum;
+        if(this.fullRowsNum) {
+          this.board.drawBoardGrid();
+          this.updateScore();
+          this.updateLavel();
+        }
       } else {
         if (this.board.activeTetramino.y === -1 || this.board.activeTetramino.y === -2) {
           console.log(this.board.activeTetramino);
-          // this.board.activeTetramino.draw();
           this.endGame();
           return;
         } else {
@@ -309,13 +332,19 @@ class TetrisGame {
   }
 
   updateScore() {
-    this.fullRowsNum = this.board.fullRowsNum;
-    if(this.fullRowsNum) {
-      this.score += this.fullRowsNum*this.point*this.fullRowsNum;
-      this.scoreElem.innerHTML = this.score;
-      this.scoreElem.classList.add('active-score');
-      setTimeout( () =>  this.scoreElem.classList.remove('active-score'), 500);
-      this.board.clearFullRowsNum();
+    this.score += this.fullRowsNum*this.point*this.fullRowsNum;
+    this.scoreElem.innerHTML = this.score;
+    this.scoreElem.classList.add('active-score');
+    setTimeout( () =>  this.scoreElem.classList.remove('active-score'), 500);
+    this.board.clearFullRowsNum();
+  }
+
+  updateLavel() {
+    this.progress = Math.floor(this.score / 300);
+    if (this.progress > this.lavel) {
+      this.lavel = this.progress;
+      this.lavelElem.innerHTML = this.lavel;
+      this.timer -= 3;
     }
   }
 
