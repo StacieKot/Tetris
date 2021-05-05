@@ -20,8 +20,6 @@ const poins = {
   5 : 300
 }
 
-// const gameColors = ['cyan', 'blue', 'orange', 'yellow', 'green', 'purple', 'red'];
-
 const gameColors = [
   {x : 190, y : 130},
   {x : 100, y : 120},
@@ -33,16 +31,12 @@ const gameColors = [
 ]
   
 const moves = {
-  [keyEvent.left]:  tetr => ({ ...tetr, x: tetr.x - 1 }),
-  [keyEvent. right]: tetr => ({ ...tetr, x: tetr.x + 1 }),
-  [keyEvent.down]: tetr => ({ ...tetr, y: tetr.y + 1 }),
+  [keyEvent.left]:  tetr => ({ ...tetr, x: tetr.x - tetr.speedX }),
+  [keyEvent. right]: tetr => ({ ...tetr, x: tetr.x + tetr.speedX }),
+  [keyEvent.down]: tetr => ({ ...tetr, y: tetr.y + tetr.speedY }),
   [keyEvent.rotate]: tetr => board.activeTetramino.rotateMatrix(tetr),
   // [keyEvent.fastdDown]: tetr => ({ ...tetr, y: tetr.y + 2 })
 };
-
-const playSettings = {
-  count : 0,
-}
 
 const canvas = document.querySelector('.game-area');
 const context = canvas.getContext('2d');
@@ -105,8 +99,6 @@ class Board {
     this.grid.forEach( (row, y) => {
       row.forEach( (value, x) => {
         if (value > 0) {
-          // this.context.fillStyle = this.colors[value - 1];
-          // this.context.fillRect(x, y, 1, 1);
           this.context.drawImage(this.image, this.colors[value - 1].x, this.colors[value - 1].y, this.image.width, this.image.height, x, y, 1, 1);
         }
       })
@@ -126,24 +118,22 @@ class Board {
 
   clearFullRows() {
     const fullRows = this.getFullRows();
-    this.fullRowsNum = fullRows.length;
-    if(this.fullRowsNum) {
-      // console.time('label');
+    if(fullRows.length) {
+      console.time('label');
       fullRows.forEach( value => {
         this.grid.splice(value, 1);
         this.grid.unshift(this.newRow);
       });
-      // console.timeEnd('label');
+      this.fullRowsNum = fullRows.length;
+      console.timeEnd('label');
     }
   }
 
   clearFullRowsNum() {
-    const fullRowsNum = 0;
+    this.fullRowsNum = 0;
   }
 
 }
-
-const board = new Board(context, gameColors);
 
 class Tetramino {
   constructor(context, colors) {
@@ -160,6 +150,8 @@ class Tetramino {
     this.colors = colors;
     this.y = -1;
     this.x = 0;
+    this.speedX = 1;
+    this.speedY = 1;
     this.image = new Image();
     this.image.src = 'assets/blocks.png';
     this.image.width = 40;
@@ -188,6 +180,7 @@ class Tetramino {
   updatePos(tetramino) {
     this.x = tetramino.x;
     this.y = tetramino.y;
+    this.shape = tetramino.shape;
   }
 
   randomDiap(m) {
@@ -196,32 +189,43 @@ class Tetramino {
   }
 
   rotateMatrix(tetramino) {
-    const shape = tetramino.shape;
+    const newTetramino = JSON.parse(JSON.stringify(tetramino));
+    const shape = newTetramino.shape;
     const N = shape.length - 1; 
     const newMatrix =  shape.map((row, i) => row.map((val, j) => shape[N - j][i]) );
-    tetramino.shape = newMatrix;
-    return tetramino;
+    newTetramino.shape = newMatrix;
+    return newTetramino;
   }
 
 }
 
 class TetrisGame {
-  constructor(board, context, playBtn, gameOver) {
+  constructor(board, context) {
     this.board = board;
     this.context = context;
-    this.playBtn = document.querySelector(playBtn);
-    this.gameOver = document.querySelector(gameOver);
+    this.playBtn = document.querySelector('.play');
+    this.pauseBtn = document.querySelector('.pause');
+    this.rulesBtn = document.querySelector('.rules');
+    this.recordesBtn = document.querySelector('.recordes');
+    this.gameOver = document.querySelector('.game-over');
     this.tetram = null;
     this.gameReq = null;
     this.count = 0;
     this.score = 0;
     this.point = 100;
-    this.fullRows = 0;
+    this.fullRowsNum = 0;
     this.scoreElem = document.querySelector('.score');
+    this.onPause = false;
 
     if(this.playBtn) {
       this.playBtn.addEventListener('click', () => {
         this.startPlay();
+      });
+    }
+
+    if(this.playBtn) {
+      this.pauseBtn.addEventListener('click', () => {
+        this.pauseGame();
       });
     }
 
@@ -239,7 +243,7 @@ class TetrisGame {
   }
 
   moveTetramino(event) {
-    if(!moves[event.code]) return;
+    if(!moves[event.code] || this.onPause) return;
     const newPosition = moves[event.code](this.board.activeTetramino);
     if (this.board.validatePos(newPosition)) {
       this.board.activeTetramino.updatePos(newPosition);
@@ -252,6 +256,7 @@ class TetrisGame {
 
   startPlay() {
     cancelAnimationFrame(this.gameReq);
+    this.onPause = false;
     this.gameOver.classList.remove('game-over-active');
     this.gameReq = null;
     this.count = 0;
@@ -272,7 +277,6 @@ class TetrisGame {
         this.board.drawBoardGrid();
         this.board.clearFullRows();
         this.updateScore();
-        this.board.clearFullRowsNum();
       } else {
         if (this.board.activeTetramino.y === -1) {
           this.finishRound();
@@ -295,18 +299,31 @@ class TetrisGame {
   }
 
   updateScore() {
-    this.fullRows = this.board.fullRowsNum;
-    this.score += this.fullRows*this.point*this.fullRows;
-    if(this.fullRows) {
+    this.fullRowsNum = this.board.fullRowsNum;
+    if(this.fullRowsNum) {
+      this.score += this.fullRowsNum*this.point*this.fullRowsNum;
       this.scoreElem.innerHTML = this.score;
       this.scoreElem.classList.add('active-score');
-      setInterval( () =>  this.scoreElem.classList.remove('active-score'), 500);
+      setTimeout( () =>  this.scoreElem.classList.remove('active-score'), 500);
+      this.board.clearFullRowsNum();
+    }
+  }
+
+  pauseGame() {
+    if (!this.board.activeTetramino) return;
+    if(!this.onPause) {
+      this.board.activeTetramino.speedY = 0;
+      this.onPause = true;
+    } else {
+      this.board.activeTetramino.speedY = 1;
+      this.onPause = false;
     }
   }
 
 }
 
-const game = new TetrisGame(board, context, '.play', '.game-over');
+const board = new Board(context, gameColors);
+const game = new TetrisGame(board, context);
 // console.log(game);
 
 
