@@ -189,6 +189,12 @@ class TetrisGame {
       'ArrowDown' : tetr => ({ ...tetr, y: tetr.y + tetr.speedY}),
       'ArrowUp' : tetr => board.activeTetramino.rotateMatrix(tetr)
     };
+    this.audioClearRows = new Audio('assets/audio/clear.rf64');
+    this.audioMove = new Audio('assets/audio/sounds_block-rotate.mp3');
+    this.audioMoveDown = new Audio('assets/audio/selection.rf64');
+    this.audioGameOver = new Audio('assets/audio/gameover.rf64');
+    this.AudioIsON = true;
+    this.xxx = true;
 
     if(this.playBtn) {
       this.playBtn.addEventListener('click', () => {
@@ -204,6 +210,11 @@ class TetrisGame {
 
     document.addEventListener('keydown', (event) => {
       this.moveTetramino(event);
+    });
+
+    document.addEventListener('keyup', (event) => {
+      if (event.code !== 'ArrowDown') return;
+      this.xxx = true;
     });
     
   }
@@ -232,6 +243,13 @@ class TetrisGame {
     const newPosition = this.eventCodes[event.code](this.board.activeTetramino);
     if (this.board.validatePos(newPosition)) {
       this.board.activeTetramino.updatePos(newPosition);
+      if(event.code !== 'ArrowDown' && this.AudioIsON) {
+        this.playAudio(this.audioMove);
+      } else if ( this.AudioIsON) {
+        this.playAudio(this.audioMove);
+        this.xxx = false;
+      }
+     
     }
   }
 
@@ -246,6 +264,7 @@ class TetrisGame {
       this.board.saveSett();
       this.board.clearFullRows();
       if (this.board.fullRowsNum) {
+        this.playAudio(this.audioClearRows);
         this.updateScore();
         this.updateLavel();
       }
@@ -281,6 +300,7 @@ class TetrisGame {
 
   endGame() {
     this.gameOver.classList.add('game-over-active');
+    this.playAudio(this.audioGameOver);
     this.score = 0;
   }
 
@@ -312,6 +332,11 @@ class TetrisGame {
       this.onPause = false;
       this.pauseBtn.innerHTML = 'Pause';
     }
+  }
+
+  playAudio(audio) {
+    audio.currentTime = 0;
+    audio.play();
   }
 
 }
