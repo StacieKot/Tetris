@@ -31,8 +31,7 @@ class Board {
     this.image.src = 'assets/blocks.png';
     this.image.width = 40;
     this.image.height = 40;
-    this.fullRows = null;
-    this.fullRowsNum = 0;
+    this.fullRowsNum = null;
     this.newRow = Array(boardSettings.columns).fill(0);
   }
 
@@ -65,20 +64,14 @@ class Board {
   }
 
   saveSett() {
-    console.table(this.activeTetramino.shape);
      const cloneGrid =  JSON.parse(JSON.stringify(this.grid)); 
       this.activeTetramino.shape.forEach((row, y) => {
-        console.log(row);
-        console.log(y);
         row.forEach((value, x) => {
           if (value > 0 && cloneGrid[y]) {
             cloneGrid[y + this.activeTetramino.y][x + this.activeTetramino.x] = value;
-            console.log(value);
-            console.log(cloneGrid);
           } 
         });
       });
-
       this.grid = cloneGrid;
   }
 
@@ -101,10 +94,6 @@ class Board {
         this.grid.unshift(this.newRow);
       }
     });
-  }
-
-  clearFullRowsNum() {
-    this.fullRowsNum = 0;
   }
 
 }
@@ -188,7 +177,7 @@ class TetrisGame {
     this.timer = null;
     this.score = 0;
     this.point = 100;
-    this.fullRowsNum = 0;
+    this.fullRowsNum = null;
     this.scoreElem = document.querySelector('.score');
     this.lavelElem = document.querySelector('.lavel');
     this.onPause = false;
@@ -256,6 +245,10 @@ class TetrisGame {
       }
       this.board.saveSett();
       this.board.clearFullRows();
+      if (this.board.fullRowsNum) {
+        this.updateScore();
+        this.updateLavel();
+      }
       this.createNewTetramino();
     }
     return true;
@@ -292,19 +285,19 @@ class TetrisGame {
   }
 
   updateScore() {
+    this.fullRowsNum = this.board.fullRowsNum;
     this.score += this.fullRowsNum*this.point*this.fullRowsNum;
     this.scoreElem.innerHTML = this.score;
     this.scoreElem.classList.add('active-score');
     setTimeout( () =>  this.scoreElem.classList.remove('active-score'), 500);
-    // this.board.clearFullRowsNum();
   }
 
   updateLavel() {
-    this.progress = Math.floor(this.score / 500);
+    this.progress = Math.floor(this.score / 1000);
     if (this.progress > this.lavel) {
       this.lavel = this.progress;
       this.lavelElem.innerHTML = this.lavel;
-      this.timer -= 3;
+      this.timer -= 5;
     }
   }
 
