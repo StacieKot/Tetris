@@ -1,24 +1,10 @@
-'use strict'
+'use strict';
+
 const boardSettings = {
   columns : 10,
   rows : 20,
   blockSize : 35
-}
-
-const keyEvent = {
-  left : 'ArrowLeft',
-  right: 'ArrowRight',
-  down: 'ArrowDown',
-  rotate: 'ArrowUp',
-  fastdDown: 'Space'
-}
-const poins = {
-  1 : 100,
-  2 : 300,
-  3 : 500,
-  4 : 800,
-  5 : 300
-}
+};
 
 const gameColors = [
   {x : 190, y : 130},
@@ -28,21 +14,13 @@ const gameColors = [
   {x : 190, y : 40},
   {x : 50, y : 70},
   {x : 240, y : 90}
-]
-  
-const moves = {
-  [keyEvent.left]:  tetr => ({ ...tetr, x: tetr.x - tetr.speedX }),
-  [keyEvent. right]: tetr => ({ ...tetr, x: tetr.x + tetr.speedX }),
-  [keyEvent.down]: tetr => ({ ...tetr, y: tetr.y + tetr.speedY }),
-  [keyEvent.rotate]: tetr => board.activeTetramino.rotateMatrix(tetr),
-  // [keyEvent.fastdDown]: tetr => ({ ...tetr, y: tetr.y + 2 })
-};
+];
 
 const canvas = document.querySelector('.game-area');
 const context = canvas.getContext('2d');
 context.canvas.width = boardSettings.columns * boardSettings.blockSize;
 context.canvas.height = boardSettings.rows * boardSettings.blockSize;
-context.scale(boardSettings.blockSize, boardSettings.blockSize);
+// context.scale(boardSettings.blockSize, boardSettings.blockSize);
 
 class Board {
   constructor(context, colors) {
@@ -53,8 +31,9 @@ class Board {
     this.image.src = 'assets/blocks.png';
     this.image.width = 40;
     this.image.height = 40;
+    this.fullRows = null;
     this.fullRowsNum = 0;
-    this.newRow = Array.from(Array(boardSettings.columns).fill(0));
+    this.newRow = Array(boardSettings.columns).fill(0);
   }
 
   reset() {
@@ -80,53 +59,48 @@ class Board {
       return row.every( (value, shapeX) => {
         const currX = pos.x + shapeX;
         const currY = pos.y + shapeY;
-        return value === 0 || currY < 0 ||  (this.horizValid(currX) && this.verticalValid(currY) && this.isFree(currX, currY));
-      })
-    })
+        return value === 0 || (currY < 0 && currX > 0 && currX < boardSettings.columns) ||  (this.horizValid(currX) && this.verticalValid(currY) && this.isFree(currX, currY));
+      });
+    });
   }
 
   saveSett() {
-    this.activeTetramino.shape.forEach((row, y) => {
-      row.forEach((value, x) => {
-        if (value > 0) {
-          this.grid[y + this.activeTetramino.y][x + this.activeTetramino.x] = value;
-        }
+    console.table(this.activeTetramino.shape);
+     const cloneGrid =  JSON.parse(JSON.stringify(this.grid)); 
+      this.activeTetramino.shape.forEach((row, y) => {
+        console.log(row);
+        console.log(y);
+        row.forEach((value, x) => {
+          if (value > 0 && cloneGrid[y]) {
+            cloneGrid[y + this.activeTetramino.y][x + this.activeTetramino.x] = value;
+            console.log(value);
+            console.log(cloneGrid);
+          } 
+        });
       });
-    });
+
+      this.grid = cloneGrid;
   }
 
   drawBoardGrid() {
     this.grid.forEach( (row, y) => {
       row.forEach( (value, x) => {
         if (value > 0) {
-          this.context.drawImage(this.image, this.colors[value - 1].x, this.colors[value - 1].y, this.image.width, this.image.height, x, y, 1, 1);
+          this.context.drawImage(this.image, this.colors[value - 1].x, this.colors[value - 1].y, this.image.width, this.image.height, x*boardSettings.blockSize, y*boardSettings.blockSize, boardSettings.blockSize, boardSettings.blockSize);
         }
-      })
-    })
-
-  }
-
-  getFullRows() {
-    const fullRows = this.grid.reduce( (arr, row, y) => {
-      if (row.every(value => value > 0 )) {
-        arr = [...arr, y];
-      }
-      return arr;
-    }, []);
-    return fullRows;
+      });
+    });
   }
 
   clearFullRows() {
-    const fullRows = this.getFullRows();
-    if(fullRows.length) {
-      console.time('label');
-      fullRows.forEach( value => {
-        this.grid.splice(value, 1);
+    this.fullRowsNum = 0;
+    this.grid.forEach((row, y) => {
+      if (row.every(value => value > 0)) {
+        this.fullRowsNum++;
+        this.grid.splice(y, 1);
         this.grid.unshift(this.newRow);
-      });
-      this.fullRowsNum = fullRows.length;
-      console.timeEnd('label');
-    }
+      }
+    });
   }
 
   clearFullRowsNum() {
@@ -159,12 +133,11 @@ class Tetramino {
   }
 
   draw() {
-    // this.context.fillStyle = this.color;
     this.shape.forEach( (row, y) => {
       row.forEach( (value, x) => {
         if (value > 0) {
-          // this.context.fillRect( this.x + x, this.y + y, 1, 1);
-          this.context.drawImage(this.image, this.colors[value - 1].x, this.colors[value - 1].y, this.image.width, this.image.height, this.x + x, this.y + y, 1, 1);
+          this.context.drawImage(this.image, this.colors[value - 1].x, this.colors[value - 1].y, this.image.width, this.image.height, 
+            (this.x + x)*boardSettings.blockSize, (this.y + y)*boardSettings.blockSize, boardSettings.blockSize, boardSettings.blockSize);
         }
       });
     });
@@ -172,7 +145,6 @@ class Tetramino {
 
   randomTetramino() {
     this.num = this.randomDiap(this.colors.length - 1);
-    // this.color = this.colors[this.num];
     this.shape = this.shapes[this.num];
     this.x = this.num === 4 ? 4 : 3; 
   }
@@ -190,10 +162,12 @@ class Tetramino {
 
   rotateMatrix(tetramino) {
     const newTetramino = JSON.parse(JSON.stringify(tetramino));
-    const shape = newTetramino.shape;
-    const N = shape.length - 1; 
-    const newMatrix =  shape.map((row, i) => row.map((val, j) => shape[N - j][i]) );
-    newTetramino.shape = newMatrix;
+    for (let y = 0; y < newTetramino.shape.length; ++y) {
+      for (let x = 0; x < y; ++x) {
+        [newTetramino.shape[x][y], newTetramino.shape[y][x]] = [newTetramino.shape[y][x], newTetramino.shape[x][y]];
+      }
+    }
+    newTetramino.shape.forEach(row => row.reverse());
     return newTetramino;
   }
 
@@ -219,14 +193,12 @@ class TetrisGame {
     this.lavelElem = document.querySelector('.lavel');
     this.onPause = false;
     this.lavel = 1;
-    this.lavelSpeedY = 0;
     this.progress = null;
-    this.moves = {
-      [keyEvent.left]:  tetr => ({ ...tetr, x: tetr.x - tetr.speedX }),
-      [keyEvent. right]: tetr => ({ ...tetr, x: tetr.x + tetr.speedX }),
-      [keyEvent.down]: tetr => ({ ...tetr, y: tetr.y + tetr.speedY}),
-      [keyEvent.rotate]: tetr => board.activeTetramino.rotateMatrix(tetr),
-      // [keyEvent.fastdDown]: tetr => ({ ...tetr, y: tetr.y + 2 })
+    this.eventCodes = {
+      'ArrowLeft' : tetr => ({ ...tetr, x: tetr.x - tetr.speedX }),
+      'ArrowRight': tetr => ({ ...tetr, x: tetr.x + tetr.speedX }),
+      'ArrowDown' : tetr => ({ ...tetr, y: tetr.y + tetr.speedY}),
+      'ArrowUp' : tetr => board.activeTetramino.rotateMatrix(tetr)
     };
 
     if(this.playBtn) {
@@ -235,48 +207,16 @@ class TetrisGame {
       });
     }
 
-    if(this.playBtn) {
+    if(this.pauseBtn) {
       this.pauseBtn.addEventListener('click', () => {
         this.pauseGame();
       });
     }
 
-    document.addEventListener('keydown', () => {
+    document.addEventListener('keydown', (event) => {
       this.moveTetramino(event);
     });
-   
-  }
-
-  createNewTetramino() {
-    this.tetram = new Tetramino(this.context, gameColors);
-    this.board.activeTetramino = this.tetram;
-    this.tetram.randomTetramino();
-    this.tetram.draw();
-  }
-
-  moveTetramino(event) {
-    if(!this.moves[event.code] || this.onPause) return;
-    event.preventDefault();
-    this.newPosition = this.moves[event.code](this.board.activeTetramino);
-    if (this.board.validatePos(this.newPosition)) {
-      this.updateGame(this.newPosition);
-    }
-  }
-
-  updateGame(pos) {
-    this.board.activeTetramino.updatePos(pos);
-    this.context.clearRect(0, 0, this.context.canvas.width, this.context.canvas.height); 
-    this.board.activeTetramino.draw();
-    this.board.drawBoardGrid();
-    this.board.clearFullRows();
-    this.fullRowsNum = this.board.fullRowsNum;
-    if(this.fullRowsNum) {
-      this.context.clearRect(0, 0, this.context.canvas.width, this.context.canvas.height); 
-      this.board.activeTetramino.draw();
-      this.board.drawBoardGrid();
-      this.updateScore();
-      this.updateLavel();
-    }
+    
   }
 
   startPlay() {
@@ -297,27 +237,53 @@ class TetrisGame {
     this.animateGame();
   }
 
+  moveTetramino(event) {
+    if(!this.eventCodes[event.code] || this.onPause) return;
+    event.preventDefault();
+    const newPosition = this.eventCodes[event.code](this.board.activeTetramino);
+    if (this.board.validatePos(newPosition)) {
+      this.board.activeTetramino.updatePos(newPosition);
+    }
+  }
+
+  moweDown() {
+    const newPosition = this.eventCodes.ArrowDown(this.board.activeTetramino);
+    if(this.board.validatePos(newPosition)) {
+      this.board.activeTetramino.updatePos(newPosition);
+    } else {
+      if (this.board.activeTetramino.y < 0) {
+        return false;
+      }
+      this.board.saveSett();
+      this.board.clearFullRows();
+      this.createNewTetramino();
+    }
+    return true;
+  }
+
+  createNewTetramino() {
+    this.tetram = new Tetramino(this.context, gameColors);
+    this.board.activeTetramino = this.tetram;
+    this.board.xxx = true;
+    this.tetram.randomTetramino();
+    this.tetram.draw();
+  }
+
   animateGame() {
     if (this.count === this.timer) {
       this.count = 0;
-      this.newPosition = this.moves['ArrowDown'](this.board.activeTetramino);
-      if (board.validatePos(this.newPosition)) {
-        this.updateGame(this.newPosition);
-      } else {
-        if (this.board.activeTetramino.y === -1 || this.board.activeTetramino.y === -2) {
-          this.endGame();
-          return;
-        } else {
-          this.board.saveSett();
-          this.createNewTetramino();
-          console.log(this.board.activeTetramino.y);
-        }
+      if (!this.moweDown()) {
+        this.endGame();
+        return;
       }
     }
+    this.context.clearRect(0, 0, this.context.canvas.width, this.context.canvas.height); 
+    this.board.activeTetramino.draw();
+    this.board.drawBoardGrid();
     this.count++;
     this.gameReq = requestAnimationFrame(() => {
       this.animateGame();
-    });
+    });   
   }
 
   endGame() {
@@ -330,7 +296,7 @@ class TetrisGame {
     this.scoreElem.innerHTML = this.score;
     this.scoreElem.classList.add('active-score');
     setTimeout( () =>  this.scoreElem.classList.remove('active-score'), 500);
-    this.board.clearFullRowsNum();
+    // this.board.clearFullRowsNum();
   }
 
   updateLavel() {
@@ -359,6 +325,6 @@ class TetrisGame {
 
 const board = new Board(context, gameColors);
 const game = new TetrisGame(board, context);
-// console.log(game);
+
 
 
