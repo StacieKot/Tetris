@@ -10,12 +10,21 @@
 </head>
 <body>
   <div class="container">
+    <form class="registration-form notvisible">
+      <label for="nickname" class="nickname-label">Enter your nickname</label>
+      <input type="text" class="nickname-input" placeholder="Player1">
+      <button type="submit" class="submit-btn">Ok</button>
+    </form>
     <div class="game-wrapper">
       <div class="buttons">
         <button class="play btn">Play</button>
         <button class="pause btn">Pause</button>
         <button class="rules btn">Rules</button>
         <button class="recordes btn">Recordes</button>
+        <div class="sound-btns">
+          <button class="sound-on sound-btn active" data-sound="on"></button>
+          <button class="sound-off sound-btn" data-sound="off"></button>
+        </div>
       </div>
       <div class="tetris">
          <canvas class="game-area"></canvas>

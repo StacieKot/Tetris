@@ -13,7 +13,11 @@ const gameColors = [
   {x : 0, y : 20},
   {x : 190, y : 40},
   {x : 50, y : 70},
-  {x : 240, y : 90}
+  {x : 240, y : 90},
+  {x : 285, y : 0},
+  {x : 331, y : 0},
+  {x : 331, y : 126},
+  {x : 285, y : 126}
 ];
 
 const canvas = document.querySelector('.game-area');
@@ -108,8 +112,13 @@ class Tetramino {
       [[4, 4], [4, 4]],
       [[0, 5, 5], [5, 5, 0], [0, 0, 0]],
       [[0, 6, 0], [6, 6, 6], [0, 0, 0]],
-      [[7, 7, 0], [0, 7, 7], [0, 0, 0]]
+      [[7, 7, 0], [0, 7, 7], [0, 0, 0]],
+      [[8, 0, 8], [8, 8, 8], [0, 0, 0]],
+      [[9, 0, 0], [9, 9, 9], [0, 0, 9]],
+      [[10, 10, 10], [0, 10, 0], [0, 10, 0]],
+      [[0, 11, 0], [11, 11, 11], [0, 11, 0]]
     ];
+    this.colorsAmount = 7;
     this.colors = colors;
     this.y = -2;
     this.x = 0;
@@ -133,7 +142,7 @@ class Tetramino {
   }
 
   randomTetramino() {
-    this.num = this.randomDiap(this.colors.length - 1);
+    this.num = this.randomDiap(this.colorsAmount - 1);
     this.shape = this.shapes[this.num];
     this.x = this.num === 4 ? 4 : 3; 
   }
@@ -159,7 +168,7 @@ class Tetramino {
     newTetramino.shape.forEach(row => row.reverse());
     return newTetramino;
   }
-
+  
 }
 
 class TetrisGame {
@@ -171,6 +180,13 @@ class TetrisGame {
     this.rulesBtn = document.querySelector('.rules');
     this.recordesBtn = document.querySelector('.recordes');
     this.gameOver = document.querySelector('.game-over');
+    this.scoreElem = document.querySelector('.score');
+    this.lavelElem = document.querySelector('.lavel');
+    this.soundOnBtn = document.querySelector('.sound-on');
+    this.soundOffBtn = document.querySelector('.sound-off');
+    this.soundBtns = document.querySelectorAll('.sound-btns');
+    this.registrBtn = document.querySelector('.submit-btn');
+    this.gameArea = document.querySelector('.game-area');
     this.tetram = null;
     this.gameReq = null;
     this.count = 0;
@@ -178,8 +194,6 @@ class TetrisGame {
     this.score = 0;
     this.point = 100;
     this.fullRowsNum = null;
-    this.scoreElem = document.querySelector('.score');
-    this.lavelElem = document.querySelector('.lavel');
     this.onPause = false;
     this.lavel = 1;
     this.progress = null;
@@ -187,14 +201,35 @@ class TetrisGame {
       'ArrowLeft' : tetr => ({ ...tetr, x: tetr.x - tetr.speedX }),
       'ArrowRight': tetr => ({ ...tetr, x: tetr.x + tetr.speedX }),
       'ArrowDown' : tetr => ({ ...tetr, y: tetr.y + tetr.speedY}),
-      'ArrowUp' : tetr => board.activeTetramino.rotateMatrix(tetr)
+      'ArrowUp' : tetr => board.activeTetramino.rotateMatrix(tetr),
+      'Space' : tetr => ({ ...tetr, y: tetr.y + tetr.speedY})
     };
     this.audioClearRows = new Audio('assets/audio/clear.rf64');
     this.audioMove = new Audio('assets/audio/sounds_block-rotate.mp3');
     this.audioMoveDown = new Audio('assets/audio/selection.rf64');
     this.audioGameOver = new Audio('assets/audio/gameover.rf64');
-    this.AudioIsON = true;
-    this.xxx = true;
+    this.audioDrop = new Audio('assets/audio/drop.mp3');
+    this.audioIsON = 'on';
+    this.lavelsScore = 1000;
+    this.lavelsTimer = {
+      2 : 31,
+      5 : 30,
+      8 : 29,
+      11 : 28,
+      14 : 27,
+      17 : 26,
+      20 : 25
+    }
+    this.nickname = null;
+    this.touchmoveEventX = [];
+    this.touchmoveEventY = [];
+    this.touchStep = 50;
+    this.touchСoordinates = {
+      touchStartX : 0,
+      touchStartY : 0,
+      touchEndX : 0,
+      touchEndX : 0
+    }
 
     if(this.playBtn) {
       this.playBtn.addEventListener('click', () => {
@@ -208,15 +243,22 @@ class TetrisGame {
       });
     }
 
+    if(this.soundBtns) {
+      this.soundBtns.forEach( btn => btn.addEventListener('click', () => this.switchSound(event)))
+    }
+
+    if(this.registrBtn) {
+      this.registrBtn.addEventListener('click', (event) => this.submitRegistr(event));
+    }
+
     document.addEventListener('keydown', (event) => {
       this.moveTetramino(event);
     });
-
-    document.addEventListener('keyup', (event) => {
-      if (event.code !== 'ArrowDown') return;
-      this.xxx = true;
-    });
     
+    this.gameArea.addEventListener('touchmove', (event) => this.handleTouch(event));
+    this.gameArea.addEventListener('touchstart', (event) => this.saveTouchSett(event));
+    this.gameArea.addEventListener('touchend', (event) => this.rotateActiveTetramino(event));
+
   }
 
   startPlay() {
@@ -240,16 +282,20 @@ class TetrisGame {
   moveTetramino(event) {
     if(!this.eventCodes[event.code] || this.onPause) return;
     event.preventDefault();
-    const newPosition = this.eventCodes[event.code](this.board.activeTetramino);
-    if (this.board.validatePos(newPosition)) {
-      this.board.activeTetramino.updatePos(newPosition);
-      if(event.code !== 'ArrowDown' && this.AudioIsON) {
-        this.playAudio(this.audioMove);
-      } else if ( this.AudioIsON) {
-        this.playAudio(this.audioMove);
-        this.xxx = false;
+    let newPosition = this.eventCodes[event.code](this.board.activeTetramino);
+    if (event.code === 'Space') {
+      this.playAudio(this.audioDrop);
+      while (this.board.validatePos(newPosition)) {
+        this.board.activeTetramino.updatePos(newPosition);
+        newPosition = this.eventCodes[event.code](this.board.activeTetramino);
       }
-     
+    } else {
+      if (this.board.validatePos(newPosition)) {
+        this.board.activeTetramino.updatePos(newPosition);
+        if(event.code !== 'ArrowDown') {
+          this.playAudio(this.audioMove);
+        } 
+      }
     }
   }
 
@@ -273,12 +319,95 @@ class TetrisGame {
     return true;
   }
 
+  handleTouch(event) {
+    event.preventDefault();
+    if (!this.board.activeTetramino) return;
+    const touchX = event.targetTouches[0].pageX;
+    const touchY = event.targetTouches[0].pageY;
+    this.touchmoveEventX.push(touchX);
+    this.touchmoveEventY.push(touchY);
+
+    if (this.touchmoveEventX[this.touchmoveEventX.length - 1] > this.touchmoveEventX[0] + this.touchStep) {
+      this.moveActiveTetram('ArrowRight', this.audioMove);
+    } else if (this.touchmoveEventX[this.touchmoveEventX.length - 1] < this.touchmoveEventX[0] - this.touchStep) {
+      this.moveActiveTetram('ArrowLeft', this.audioMove);
+    } else if (this.touchmoveEventY[this.touchmoveEventY.length - 1] > this.touchmoveEventY[0] + this.touchStep) {
+      this.moveActiveTetram('ArrowDown', this.audioMove);
+    } 
+  }
+
+  moveActiveTetram(event, sound) {
+    const newPosition = this.eventCodes[event](this.board.activeTetramino);
+    if (this.board.validatePos(newPosition)) {
+      this.board.activeTetramino.updatePos(newPosition);
+      if (sound) {
+        this.playAudio(sound);
+      }
+    } 
+    this.clearTouchmovesArr()
+  }
+
+  saveTouchSett(event) {
+    this.touchСoordinates.touchStartX = event.targetTouches[0].pageX;
+    this.touchСoordinates.touchStartY = event.targetTouches[0].pageY;
+  }
+
+  rotateActiveTetramino(event) {
+    console.log('ggg');
+    event.preventDefault();
+    if (!this.board.activeTetramino) return;
+    this.touchСoordinates.touchEndX = event.changedTouches[0].pageX;
+    this.touchСoordinates.touchEndY = event.changedTouches[0].pageY;
+    if (Math.abs(this.touchСoordinates.touchEndX - this.touchСoordinates.touchStartX) <= this.touchStep &&
+        this.touchСoordinates.touchEndY - this.touchСoordinates.touchStartY <= this.touchStep) {
+          const newPosition = this.eventCodes['ArrowUp'](this.board.activeTetramino);
+          if (this.board.validatePos(newPosition)) {
+            this.board.activeTetramino.updatePos(newPosition);
+            this.playAudio(this.audioMove);
+          } 
+    }
+    this.clearTouchmovesArr();
+    Object.keys(this.touchСoordinates).forEach( value => this.touchСoordinates[value] = 0);
+  }
+
+  clearTouchmovesArr() {
+    this.touchmoveEventX = [];
+    this.touchmoveEventY = [];
+  }
+
   createNewTetramino() {
     this.tetram = new Tetramino(this.context, gameColors);
     this.board.activeTetramino = this.tetram;
     this.board.xxx = true;
+    this.updateColors();
     this.tetram.randomTetramino();
     this.tetram.draw();
+  }
+
+  updateColors() {
+    switch (this.lavel) {
+      case 1:
+        this.board.activeTetramino.colorsAmount = 7;
+        break;
+      case 2:
+      case 3:
+      case 4:
+        this.board.activeTetramino.colorsAmount = 8;
+        break;
+      case 5:
+      case 6:
+      case 7:
+        this.board.activeTetramino.colorsAmount = 9;
+        break;
+      case 8:
+      case 9:
+      case 10:
+        this.board.activeTetramino.colorsAmount = 10;
+        break;
+      default:
+        this.board.activeTetramino.colorsAmount = 11;
+        break;
+    }
   }
 
   animateGame() {
@@ -312,12 +441,16 @@ class TetrisGame {
     setTimeout( () =>  this.scoreElem.classList.remove('active-score'), 500);
   }
 
-  updateLavel() {
-    this.progress = Math.floor(this.score / 1000);
-    if (this.progress > this.lavel) {
-      this.lavel = this.progress;
+  updateLavel() { 
+    const currLavel = Math.floor(this.score/this.lavelsScore) + 1;
+    if (currLavel > this.lavel) {
+      this.lavel = currLavel;
       this.lavelElem.innerHTML = this.lavel;
-      this.timer -= 5;
+      this.lavelElem.classList.add('active-score');
+      setTimeout( () =>  this.lavelElem.classList.remove('active-score'), 500);
+      if (this.lavelsTimer[this.lavel]) {
+        this.timer = this.lavelsTimer[this.lavel];
+      }
     }
   }
 
@@ -335,8 +468,24 @@ class TetrisGame {
   }
 
   playAudio(audio) {
-    audio.currentTime = 0;
-    audio.play();
+    if (this.audioIsON === 'on') {
+      audio.currentTime = 0;
+      audio.play();
+    }
+  }
+
+  switchSound(event) {
+    event.target.classList.add('active');
+    const siblingBtn = event.target.previousElementSibling ? event.target.previousElementSibling : event.target.nextElementSibling;
+    siblingBtn.classList.remove('active');
+    this.audioIsON = event.target.dataset.sound;
+  }
+
+  submitRegistr(event) {
+    event.preventDefault();
+    const regForm = document.querySelector('.registration-form');
+    this.nickname = regForm.querySelector('.nickname-input').value;
+    regForm.classList.add('notvisible');
   }
 
 }

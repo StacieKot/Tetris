@@ -1,6 +1,8 @@
 @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
 
 // font-family: 'Press Start 2P', cursive;
+// font-family: 'Share Tech Mono', monospace;
 body {
   margin: 0;
   font-family: 'Press Start 2P', cursive;
@@ -15,6 +17,7 @@ body {
   background: url(assets/background.png);
   background-size: cover;
   min-height: 100vh;
+  position: relative;
 }
 
 .game-wrapper {
@@ -50,7 +53,6 @@ body {
   // background-color: #3a206a;
   
 }
-
 
 .game-over {
   font-size: 36px;
@@ -116,8 +118,128 @@ body {
  transition: all 0.5s ease-out;
 }
 
+.lavel {
+  transition: all 0.5s ease-out;
+ }
+
 .active-score {
   color: rgb(255, 202, 57);
   transform: scale(2);
 }
 
+.sound-btns {
+  background: linear-gradient(rgba(8,177,95, 0.2), rgba(33,80,162, 0.2));
+  border: #218b58 2px solid;
+  display: flex;
+  border-radius: 5px;
+  overflow: hidden;
+  height: 48px;
+
+}
+
+.sound-btn {
+  // background: linear-gradient(rgba(8,177,95, 0.5), rgba(33,80,162, 0.5));
+  background-color: transparent;
+  flex: 0 0 50%;
+  border: none;
+  outline: none;
+  position: relative;
+  box-shadow: inset 1px 0px 15px 2px rgba(16, 46, 97, 0.7);
+  transition: all 0.5s ease-out;
+  &::before {
+    position: absolute;
+    // left: 50%;
+    top: 6px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 35%;
+  }
+}
+
+.sound-on {
+  &::before {
+    content: url(assets/sound-on.svg);
+  }
+}
+
+.sound-off {
+  &::before {
+    content: url(assets/sound-off.svg);
+  }
+}
+
+.active {
+  background: linear-gradient(rgba(8,177,95, 1), rgba(33,80,162, 1));
+  box-shadow: none;
+}
+
+.registration-form {
+  position: absolute;
+  width: 500px;
+  // height: 500px;
+  z-index: 10;
+  left: 50%;
+  top: 50%;
+ transform: translate(-50%, -50%);
+ background: linear-gradient(135deg, rgba(226,251,244,1) 0% 45%, rgba(251,230,249, 1) 45% 100%);
+ border-radius: 10px;
+ padding: 80px 75px 120px 75px; 
+ font-family: 'Share Tech Mono', monospace;
+ color: #696f73;
+ font-size: 26px;
+ box-shadow: 5px 5px 5px -5px rgba(34, 60, 80, 0.6);
+}
+
+.nickname-label {
+  display: block;
+  text-align: center;
+
+}
+
+.nickname-input {
+  display: block;
+  background-color: white;
+  border: 1px solid white;
+  outline: none;
+  width: 100%;
+  padding: 20px;
+  margin: 50px 0  40px 0;
+  border-radius: 5px;
+  &:focus {
+    border: 1px solid #b8f1e6;
+  }
+  &::placeholder {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 20px;
+  }
+}
+
+.submit-btn {
+  width: 100px;
+  display: block;
+  margin: 0 auto;
+  background-color: #b8f1e6;
+  border: none;
+  outline: none;
+  border-radius: 5px;
+  text-transform: uppercase;
+  font-size: 20px;
+  padding: 10px;
+  font-family: 'Share Tech Mono', monospace;
+  color: #696f73;
+  &:hover,
+  &:active {
+    background-color: #43c9ae;
+  }
+}
+
+.notvisible {
+  transition: transform 0.5s ease-out;
+  z-index: -1;
+  visibility: hidden;
+  transform: scale(0);
+}
+
+.notscrollable {
+  overflow: hidden;
+}

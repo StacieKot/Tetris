@@ -1,4 +1,5 @@
 @import url("https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap");
 body {
   margin: 0;
   font-family: 'Press Start 2P', cursive;
@@ -14,6 +15,7 @@ body {
   background: url(assets/background.png);
   background-size: cover;
   min-height: 100vh;
+  position: relative;
 }
 
 .game-wrapper {
@@ -123,8 +125,155 @@ body {
   transition: all 0.5s ease-out;
 }
 
+.lavel {
+  -webkit-transition: all 0.5s ease-out;
+  transition: all 0.5s ease-out;
+}
+
 .active-score {
   color: #ffca39;
   -webkit-transform: scale(2);
           transform: scale(2);
+}
+
+.sound-btns {
+  background: -webkit-gradient(linear, left top, left bottom, from(rgba(8, 177, 95, 0.2)), to(rgba(33, 80, 162, 0.2)));
+  background: linear-gradient(rgba(8, 177, 95, 0.2), rgba(33, 80, 162, 0.2));
+  border: #218b58 2px solid;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  border-radius: 5px;
+  overflow: hidden;
+  height: 48px;
+}
+
+.sound-btn {
+  background-color: transparent;
+  -webkit-box-flex: 0;
+      -ms-flex: 0 0 50%;
+          flex: 0 0 50%;
+  border: none;
+  outline: none;
+  position: relative;
+  -webkit-box-shadow: inset 1px 0px 15px 2px rgba(16, 46, 97, 0.7);
+          box-shadow: inset 1px 0px 15px 2px rgba(16, 46, 97, 0.7);
+  -webkit-transition: all 0.5s ease-out;
+  transition: all 0.5s ease-out;
+}
+
+.sound-btn::before {
+  position: absolute;
+  top: 6px;
+  left: 50%;
+  -webkit-transform: translateX(-50%);
+          transform: translateX(-50%);
+  width: 35%;
+}
+
+.sound-on::before {
+  content: url(assets/sound-on.svg);
+}
+
+.sound-off::before {
+  content: url(assets/sound-off.svg);
+}
+
+.active {
+  background: -webkit-gradient(linear, left top, left bottom, from(#08b15f), to(#2150a2));
+  background: linear-gradient(#08b15f, #2150a2);
+  -webkit-box-shadow: none;
+          box-shadow: none;
+}
+
+.registration-form {
+  position: absolute;
+  width: 500px;
+  z-index: 10;
+  left: 50%;
+  top: 50%;
+  -webkit-transform: translate(-50%, -50%);
+          transform: translate(-50%, -50%);
+  background: linear-gradient(135deg, #e2fbf4 0% 45%, #fbe6f9 45% 100%);
+  border-radius: 10px;
+  padding: 80px 75px 120px 75px;
+  font-family: 'Share Tech Mono', monospace;
+  color: #696f73;
+  font-size: 26px;
+  -webkit-box-shadow: 5px 5px 5px -5px rgba(34, 60, 80, 0.6);
+          box-shadow: 5px 5px 5px -5px rgba(34, 60, 80, 0.6);
+}
+
+.nickname-label {
+  display: block;
+  text-align: center;
+}
+
+.nickname-input {
+  display: block;
+  background-color: white;
+  border: 1px solid white;
+  outline: none;
+  width: 100%;
+  padding: 20px;
+  margin: 50px 0  40px 0;
+  border-radius: 5px;
+}
+
+.nickname-input:focus {
+  border: 1px solid #b8f1e6;
+}
+
+.nickname-input::-webkit-input-placeholder {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 20px;
+}
+
+.nickname-input:-ms-input-placeholder {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 20px;
+}
+
+.nickname-input::-ms-input-placeholder {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 20px;
+}
+
+.nickname-input::placeholder {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 20px;
+}
+
+.submit-btn {
+  width: 100px;
+  display: block;
+  margin: 0 auto;
+  background-color: #b8f1e6;
+  border: none;
+  outline: none;
+  border-radius: 5px;
+  text-transform: uppercase;
+  font-size: 20px;
+  padding: 10px;
+  font-family: 'Share Tech Mono', monospace;
+  color: #696f73;
+}
+
+.submit-btn:hover, .submit-btn:active {
+  background-color: #43c9ae;
+}
+
+.notvisible {
+  -webkit-transition: -webkit-transform 0.5s ease-out;
+  transition: -webkit-transform 0.5s ease-out;
+  transition: transform 0.5s ease-out;
+  transition: transform 0.5s ease-out, -webkit-transform 0.5s ease-out;
+  z-index: -1;
+  visibility: hidden;
+  -webkit-transform: scale(0);
+          transform: scale(0);
+}
+
+.notscrollable {
+  overflow: hidden;
 }
