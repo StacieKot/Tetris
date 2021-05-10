@@ -229,7 +229,7 @@ class TetrisGame {
     this.touchmoveEventY = [];
     this.touchmoveEventTimer = [];
     this.touchmoveCounter = 0;
-    this.touchStep = 50;
+    this.touchStep = 30;
     this.touchСoordinates = {
       touchStartX : 0,
       touchStartY : 0,
@@ -322,7 +322,7 @@ class TetrisGame {
     } else if (this.touchmoveEventX[this.touchmoveEventX.length - 1] < this.touchmoveEventX[0] - this.touchStep) {
       this.moveActiveTetram('ArrowLeft', this.audioMove);
     } else if (this.touchmoveEventY[this.touchmoveEventY.length - 1] > this.touchmoveEventY[0] + this.touchStep 
-      && this.touchmoveEventTimer[this.touchmoveEventTimer.length - 1] - this.touchmoveEventTimer[0] < 3) {
+      && this.touchmoveEventTimer[this.touchmoveEventTimer.length - 1] - this.touchmoveEventTimer[0] < 5) {
         let newPosition = this.eventCodes['Space'](this.board.activeTetramino);
         while (this.board.validatePos(newPosition)) {
           this.board.activeTetramino.updatePos(newPosition);
