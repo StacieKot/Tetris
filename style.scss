@@ -3,6 +3,22 @@
 
 // font-family: 'Press Start 2P', cursive;
 // font-family: 'Share Tech Mono', monospace;
+$tablet: 850px;
+
+:root {
+  --game-wrapper-paddingTop: 150px;
+  --tetris-padding: 20px;
+  @media only all and (max-height: 900px) {
+    --game-wrapper-paddingTop: 20px;
+  }
+  @media only all and (max-width: $tablet) {
+    --game-wrapper-paddingTop: 0;
+  }
+  @media only all and (max-width:450px) {
+    --tetris-padding: 10px;
+  }
+}
+
 body {
   margin: 0;
   font-family: 'Press Start 2P', cursive;
@@ -16,24 +32,25 @@ body {
 .container {
   background: url(assets/background.png);
   background-size: cover;
-  min-height: 100vh;
+  height: 100vh;
   position: relative;
+  @media only all and (max-width: $tablet) {
+   max-height: 100vh;
+  }
 }
 
 .game-wrapper {
   display: flex;
   justify-content: center;
   position: relative;
-  padding-top: calc((100vh - 785px) / 2);
-  // padding: 20px;
-  // border-radius: 10px;
- 
-  // border: yellowgreen 3px solid;
-
+  padding-top: var(--game-wrapper-paddingTop);
+  @media only all and (max-width: $tablet) {
+    flex-wrap: wrap;
+  }
 }
 
 .tetris {
-  padding: 20px;
+  padding: var(--tetris-padding);
   border-radius: 10px;
   position: relative;
   background: linear-gradient(rgba(66,15,92, 0.7), rgba(33,80,162, 0.7));
@@ -45,13 +62,15 @@ body {
               -5px 5px 25px -5px #FF616B, 
               -5px -5px 25px -5px #8E5CFF, 
               5px 5px 15px 0px rgba(0,0,0,0);
+
+  @media only all and (max-width: $tablet) {
+    order: 2;
+  }
+
 }
 
 .game-area {
-  // border: blueviolet 2px solid;
   box-shadow: inset 1px 0px 29px 5px rgba(0,0,0,0.54);
-  // background-color: #3a206a;
-  
 }
 
 .game-over {
@@ -86,6 +105,28 @@ body {
     }
 
   }
+
+  @media only all and (max-width: $tablet) {
+    order: 1;
+    flex-basis: 100%;
+    display: flex;
+    justify-content: center;
+    font-size: 18px;
+
+    .output {
+     display: flex;
+     padding: 0;
+
+      >div:first-child {
+        display: none;
+      }
+      
+      >div{
+        margin: 30px 0 50px 0;
+      }
+  
+    }
+  }
  
 }
 
@@ -94,6 +135,18 @@ body {
   flex-direction: column;
   flex: 0 0 200px;
   padding-right: 30px;
+
+  @media only all and (max-width: $tablet) {
+    order: 3;
+    flex-basis: 100%;
+    padding-right: 0;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    padding-top: 40px;
+    padding-bottom: 60px;
+    
+  }
 }
 
 .btn {
@@ -108,23 +161,62 @@ body {
   outline: none;
   border: none;
   cursor: pointer;
+  @media only all and (max-width: $tablet) {
+    flex: 0 0 150px;
+    padding: 15px 0;
+    font-size: 16px;
+    margin-bottom: 10px;
+  }
 }
 
 .recordes {
   font-size: 18px;
+  @media only all and (max-width: $tablet) {
+      font-size: 16px;
+  }
 }
 
 .score {
  transition: all 0.5s ease-out;
+
+ @media only all and (max-width: $tablet) {
+  padding: 15px 0px 10px 50px;
+  width: 120px;
+  margin-right: 30px;
+  border-radius: 5px;
+  position: relative;
+  &::before {
+    content: url(assets/star.svg);
+    position: absolute;
+    left: 10px;
+    top: 5px;
+    width: 30px;
+  }
+ }
 }
 
-.lavel {
+.level {
   transition: all 0.5s ease-out;
+
+  @media only all and (max-width: $tablet) {
+    padding: 15px 0px 10px 50px;
+    width: 120px;
+    margin-left: 30px;
+    border-radius: 5px;
+    position: relative;
+    &::before {
+      content: url(assets/trophy.svg);
+      position: absolute;
+      left: 10px;
+      top: 7px;
+      width: 30px;
+    }
+   }
  }
 
 .active-score {
   color: rgb(255, 202, 57);
-  transform: scale(2);
+  transform: scale(1.5);
 }
 
 .sound-btns {
@@ -135,10 +227,13 @@ body {
   overflow: hidden;
   height: 48px;
 
+  @media only all and (max-width: $tablet) {
+    flex: 0 0 200px;
+  }
+
 }
 
 .sound-btn {
-  // background: linear-gradient(rgba(8,177,95, 0.5), rgba(33,80,162, 0.5));
   background-color: transparent;
   flex: 0 0 50%;
   border: none;
@@ -176,7 +271,6 @@ body {
 .registration-form {
   position: absolute;
   width: 500px;
-  // height: 500px;
   z-index: 10;
   left: 50%;
   top: 50%;
@@ -188,6 +282,14 @@ body {
  color: #696f73;
  font-size: 26px;
  box-shadow: 5px 5px 5px -5px rgba(34, 60, 80, 0.6);
+
+ @media only all and (max-width: 700px) {
+  width: 80%;
+  padding: 50px 5% 70px 5%; 
+}
+
+
+
 }
 
 .nickname-label {

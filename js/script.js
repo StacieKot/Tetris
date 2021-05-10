@@ -1,9 +1,13 @@
 'use strict';
 
+const columns = 10;
+const rows = 20;
+let blockSize = calculateWindowSize();
+
 const boardSettings = {
-  columns : 10,
-  rows : 20,
-  blockSize : 35
+  columns : columns,
+  rows : rows,
+  blockSize : blockSize
 };
 
 const gameColors = [
@@ -181,7 +185,7 @@ class TetrisGame {
     this.recordesBtn = document.querySelector('.recordes');
     this.gameOver = document.querySelector('.game-over');
     this.scoreElem = document.querySelector('.score');
-    this.lavelElem = document.querySelector('.lavel');
+    this.levelElem = document.querySelector('.level');
     this.soundOnBtn = document.querySelector('.sound-on');
     this.soundOffBtn = document.querySelector('.sound-off');
     this.soundBtns = document.querySelectorAll('.sound-btns');
@@ -195,7 +199,7 @@ class TetrisGame {
     this.point = 100;
     this.fullRowsNum = null;
     this.onPause = false;
-    this.lavel = 1;
+    this.level = 1;
     this.progress = null;
     this.eventCodes = {
       'ArrowLeft' : tetr => ({ ...tetr, x: tetr.x - tetr.speedX }),
@@ -210,19 +214,21 @@ class TetrisGame {
     this.audioGameOver = new Audio('assets/audio/gameover.rf64');
     this.audioDrop = new Audio('assets/audio/drop.mp3');
     this.audioIsON = 'on';
-    this.lavelsScore = 1000;
-    this.lavelsTimer = {
-      2 : 31,
-      5 : 30,
-      8 : 29,
-      11 : 28,
-      14 : 27,
-      17 : 26,
-      20 : 25
+    this.levelsScore = 1000;
+    this.levelsTimer = {
+      3 : 31,
+      6 : 30,
+      9 : 29,
+      12 : 28,
+      15 : 27,
+      18 : 26,
+      21 : 25
     }
     this.nickname = null;
     this.touchmoveEventX = [];
     this.touchmoveEventY = [];
+    this.touchmoveEventTimer = [];
+    this.touchmoveCounter = 0;
     this.touchStep = 50;
     this.touchСoordinates = {
       touchStartX : 0,
@@ -230,35 +236,17 @@ class TetrisGame {
       touchEndX : 0,
       touchEndX : 0
     }
-
-    if(this.playBtn) {
-      this.playBtn.addEventListener('click', () => {
-        this.startPlay();
-      });
-    }
-
-    if(this.pauseBtn) {
-      this.pauseBtn.addEventListener('click', () => {
-        this.pauseGame();
-      });
-    }
-
-    if(this.soundBtns) {
-      this.soundBtns.forEach( btn => btn.addEventListener('click', () => this.switchSound(event)))
-    }
-
-    if(this.registrBtn) {
-      this.registrBtn.addEventListener('click', (event) => this.submitRegistr(event));
-    }
-
+    
+    this.playBtn.addEventListener('click', () => this.startPlay());
+    this.pauseBtn.addEventListener('click', () => this.pauseGame());
+    this.soundBtns.forEach( btn => btn.addEventListener('click', (event) => this.switchSound(event)));
+    this.registrBtn.addEventListener('click', (event) => this.submitRegistr(event));
     document.addEventListener('keydown', (event) => {
       this.moveTetramino(event);
     });
-    
     this.gameArea.addEventListener('touchmove', (event) => this.handleTouch(event));
     this.gameArea.addEventListener('touchstart', (event) => this.saveTouchSett(event));
     this.gameArea.addEventListener('touchend', (event) => this.rotateActiveTetramino(event));
-
   }
 
   startPlay() {
@@ -266,13 +254,14 @@ class TetrisGame {
     this.gameReq = null;
     this.onPause = false;
     this.pauseBtn.innerHTML = 'Pause';
-    this.lavel = 1;
+    this.level = 1;
     this.score = 0;
     this.timer = 32;
     this.scoreElem.innerHTML = this.score;
-    this.lavelElem.innerHTML = this.lavel;
+    this.levelElem.innerHTML = this.level;
     this.gameOver.classList.remove('game-over-active');
     this.count = 0;
+    this.touchmoveCounter = 0;
     this.board.reset();
     this.context.clearRect(0, 0, this.context.canvas.width, this.context.canvas.height); 
     this.createNewTetramino();
@@ -284,11 +273,11 @@ class TetrisGame {
     event.preventDefault();
     let newPosition = this.eventCodes[event.code](this.board.activeTetramino);
     if (event.code === 'Space') {
-      this.playAudio(this.audioDrop);
       while (this.board.validatePos(newPosition)) {
         this.board.activeTetramino.updatePos(newPosition);
         newPosition = this.eventCodes[event.code](this.board.activeTetramino);
       }
+      this.playAudio(this.audioDrop);
     } else {
       if (this.board.validatePos(newPosition)) {
         this.board.activeTetramino.updatePos(newPosition);
@@ -312,7 +301,7 @@ class TetrisGame {
       if (this.board.fullRowsNum) {
         this.playAudio(this.audioClearRows);
         this.updateScore();
-        this.updateLavel();
+        this.updateLevel();
       }
       this.createNewTetramino();
     }
@@ -326,11 +315,22 @@ class TetrisGame {
     const touchY = event.targetTouches[0].pageY;
     this.touchmoveEventX.push(touchX);
     this.touchmoveEventY.push(touchY);
+    this.touchmoveEventTimer.push(this.touchmoveCounter);
 
     if (this.touchmoveEventX[this.touchmoveEventX.length - 1] > this.touchmoveEventX[0] + this.touchStep) {
       this.moveActiveTetram('ArrowRight', this.audioMove);
     } else if (this.touchmoveEventX[this.touchmoveEventX.length - 1] < this.touchmoveEventX[0] - this.touchStep) {
       this.moveActiveTetram('ArrowLeft', this.audioMove);
+    } else if (this.touchmoveEventY[this.touchmoveEventY.length - 1] > this.touchmoveEventY[0] + this.touchStep 
+      && this.touchmoveEventTimer[this.touchmoveEventTimer.length - 1] - this.touchmoveEventTimer[0] < 3) {
+        let newPosition = this.eventCodes['Space'](this.board.activeTetramino);
+        while (this.board.validatePos(newPosition)) {
+          this.board.activeTetramino.updatePos(newPosition);
+          newPosition = this.eventCodes['Space'](this.board.activeTetramino);
+        }
+        this.playAudio(this.audioDrop);
+        this.clearTouchCoordArr();
+        this.clearTouchTimer();
     } else if (this.touchmoveEventY[this.touchmoveEventY.length - 1] > this.touchmoveEventY[0] + this.touchStep) {
       this.moveActiveTetram('ArrowDown', this.audioMove);
     } 
@@ -344,7 +344,8 @@ class TetrisGame {
         this.playAudio(sound);
       }
     } 
-    this.clearTouchmovesArr()
+    this.clearTouchCoordArr();
+    this.clearTouchTimer();
   }
 
   saveTouchSett(event) {
@@ -366,13 +367,18 @@ class TetrisGame {
             this.playAudio(this.audioMove);
           } 
     }
-    this.clearTouchmovesArr();
+    this. clearTouchCoordArr();
     Object.keys(this.touchСoordinates).forEach( value => this.touchСoordinates[value] = 0);
   }
 
-  clearTouchmovesArr() {
+  clearTouchCoordArr() {
     this.touchmoveEventX = [];
     this.touchmoveEventY = [];
+  }
+
+  clearTouchTimer() {
+    this.touchmoveEventTimer = [];
+    this.touchmoveCounter = 0;
   }
 
   createNewTetramino() {
@@ -385,7 +391,7 @@ class TetrisGame {
   }
 
   updateColors() {
-    switch (this.lavel) {
+    switch (this.level) {
       case 1:
         this.board.activeTetramino.colorsAmount = 7;
         break;
@@ -422,6 +428,7 @@ class TetrisGame {
     this.board.activeTetramino.draw();
     this.board.drawBoardGrid();
     this.count++;
+    this.touchmoveCounter++;
     this.gameReq = requestAnimationFrame(() => {
       this.animateGame();
     });   
@@ -441,15 +448,15 @@ class TetrisGame {
     setTimeout( () =>  this.scoreElem.classList.remove('active-score'), 500);
   }
 
-  updateLavel() { 
-    const currLavel = Math.floor(this.score/this.lavelsScore) + 1;
-    if (currLavel > this.lavel) {
-      this.lavel = currLavel;
-      this.lavelElem.innerHTML = this.lavel;
-      this.lavelElem.classList.add('active-score');
-      setTimeout( () =>  this.lavelElem.classList.remove('active-score'), 500);
-      if (this.lavelsTimer[this.lavel]) {
-        this.timer = this.lavelsTimer[this.lavel];
+  updateLevel() { 
+    const currLevel = Math.floor(this.score/this.levelsScore) + 1;
+    if (currLevel > this.level) {
+      this.level = currLevel;
+      this.levelElem.innerHTML = this.level;
+      this.levelElem.classList.add('active-score');
+      setTimeout( () =>  this.levelElem.classList.remove('active-score'), 500);
+      if (this.levelsTimer[this.level]) {
+        this.timer = this.levelsTimer[this.level];
       }
     }
   }
@@ -493,5 +500,30 @@ class TetrisGame {
 const board = new Board(context, gameColors);
 const game = new TetrisGame(board, context);
 
+function calculateWindowSize() {
+  const windowHeight = document.documentElement.clientHeight;
+  const root = document.querySelector(':root');
+  const rootStyles = getComputedStyle(root);
+  const gameWrapPaddingTop = parseInt(rootStyles.getPropertyValue('--game-wrapper-paddingTop'));
+  const tetrisPadding =  parseInt(rootStyles.getPropertyValue('--tetris-padding'));
+  if (window.matchMedia("(max-width:850px)").matches) {
+    const info = document.querySelector('.info');
+    const btnContainer = document.querySelector('.buttons');
+    const infoHeight = parseInt(window.getComputedStyle(info).getPropertyValue("height"));
+    const btnContainerHeight = parseInt(window.getComputedStyle(btnContainer).getPropertyValue("height"));
+    return Math.floor((windowHeight - infoHeight - btnContainerHeight - (gameWrapPaddingTop + tetrisPadding) * 2)/rows);
+  } else {
+   return Math.floor((windowHeight - (gameWrapPaddingTop + tetrisPadding) * 2)/ rows) ;
+  }
+}
+
+function recalculateBlockSize() {
+  blockSize = calculateWindowSize();
+  boardSettings.blockSize = blockSize;
+  context.canvas.width = boardSettings.columns * boardSettings.blockSize;
+  context.canvas.height = boardSettings.rows * boardSettings.blockSize;
+}
+
+window.addEventListener('resize', recalculateBlockSize);
 
 
