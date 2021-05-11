@@ -263,12 +263,31 @@ body {
     }
 
   }
+
+  @media only all and (max-width: 450px) {
+    flex: 0 0 45px;
+    height: 45px;
+    
+    svg {
+      width: 20px;
+      height: 20px;
+    }
+
+  }
 }
 
 .pause {
   @media only all and (max-width: $tablet) {
     svg {
       width: 25px;
+    }
+  }
+}
+
+.onpause {
+  @media only all and (max-width: $tablet) {
+    svg {
+      left: 55%;
     }
   }
 }

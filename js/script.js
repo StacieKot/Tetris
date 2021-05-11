@@ -491,22 +491,21 @@ function createGame(){
     pauseGame(event) {
       event.preventDefault();
       if (!this.board.activeTetramino) return;
+      const pauseSvg = this.pauseBtn.querySelector('.pause-svg');
       if(!this.onPause) {
         this.board.activeTetramino.speedY = 0;
         this.onPause = true;
         this.pauseBtnCont.innerHTML = 'Resume';
-        if (window.matchMedia("(max-width:850px)").matches) {
-          this.pauseBtn.querySelector('.pause-svg').setAttribute('xlink:href', 'assets/sprites.svg#play');
-        }
+        pauseSvg.setAttribute('xlink:href', 'assets/sprites.svg#play');
+        this.pauseBtn.classList.add('onpause');
       } else {
         this.board.activeTetramino.speedY = 1;
         this.onPause = false;
         this.pauseBtnCont.innerHTML = 'Pause';
-        if (window.matchMedia("(max-width:850px)").matches) {
-          this.pauseBtn.querySelector('.pause-svg').setAttribute('xlink:href', 'assets/sprites.svg#pause');
-        }
-      }
+        pauseSvg.setAttribute('xlink:href', 'assets/sprites.svg#pause');
+        this.pauseBtn.classList.remove('onpause');
     }
+  }
   
     playAudio(audio) {
       if (this.audioIsON === 'on') {

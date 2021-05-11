@@ -343,9 +343,28 @@ body {
   }
 }
 
+@media only all and (max-width: 450px) {
+  .btn {
+    -webkit-box-flex: 0;
+        -ms-flex: 0 0 45px;
+            flex: 0 0 45px;
+    height: 45px;
+  }
+  .btn svg {
+    width: 20px;
+    height: 20px;
+  }
+}
+
 @media only all and (max-width: 850px) {
   .pause svg {
     width: 25px;
+  }
+}
+
+@media only all and (max-width: 850px) {
+  .onpause svg {
+    left: 55%;
   }
 }
 
