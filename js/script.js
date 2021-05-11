@@ -351,7 +351,7 @@ class TetrisGame {
         this.clearTouchCoordArr();
         this.clearTouchTimer();
     } else if (this.touchmoveEventY[this.touchmoveEventY.length - 1] > this.touchmoveEventY[0] + boardSettings.blockSize) {
-      this.moveActiveTetram('ArrowDown', this.audioMove);
+      this.moveActiveTetram('ArrowDown');
     } 
   }
 
