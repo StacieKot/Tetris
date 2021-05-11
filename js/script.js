@@ -27,8 +27,8 @@
 
   const canvas = document.createElement('canvas');
   const context = canvas.getContext('2d');
-  canvas.width = boardSettings.columns * boardSettings.blockSize;
-  canvas.height = boardSettings.rows * boardSettings.blockSize;
+  context.canvas.width = boardSettings.columns * boardSettings.blockSize;
+  context.canvas.height = boardSettings.rows * boardSettings.blockSize;
   canvas.classList.add('game-area');
   document.querySelector('.tetris').appendChild(canvas);
   
