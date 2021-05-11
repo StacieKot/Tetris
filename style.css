@@ -29,6 +29,12 @@ body {
   font-size: 24px;
 }
 
+@media only all and (max-width: 850px) {
+  body {
+    font-size: 20px;
+  }
+}
+
 * {
   -webkit-box-sizing: border-box;
           box-sizing: border-box;
@@ -117,18 +123,31 @@ body {
 
 .info {
   -webkit-box-flex: 0;
-      -ms-flex: 0 0 200px;
-          flex: 0 0 200px;
+      -ms-flex: 0 0 220px;
+          flex: 0 0 220px;
 }
 
 .info .output {
   text-align: center;
-  padding: 10px 10px 30px 10px;
   color: white;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: stretch;
+      -ms-flex-align: stretch;
+          align-items: stretch;
+  margin: 10px 0 40px 20px;
 }
 
-.info .output > div {
-  margin-bottom: 20px;
+.info .output .icon {
+  -webkit-box-flex: 0;
+      -ms-flex: 0 0 50px;
+          flex: 0 0 50px;
+}
+
+.info .output .icon > svg {
+  width: 50px;
+  height: 70px;
 }
 
 @media only all and (max-width: 850px) {
@@ -145,18 +164,58 @@ body {
         -ms-flex-pack: center;
             justify-content: center;
     font-size: 18px;
+    -ms-flex-wrap: wrap;
+        flex-wrap: wrap;
   }
   .info .output {
-    display: -webkit-box;
-    display: -ms-flexbox;
-    display: flex;
-    padding: 0;
+    margin: 43px 30px 20px 0;
+    -webkit-box-flex: 0;
+        -ms-flex: 0 0 140px;
+            flex: 0 0 140px;
   }
-  .info .output > div:first-child {
-    display: none;
+  .info .output:nth-child(2) {
+    margin-right: 0;
   }
-  .info .output > div {
-    margin: 30px 0 20px 0;
+  .info .output .icon {
+    -webkit-box-flex: 0;
+        -ms-flex: 0 0 30px;
+            flex: 0 0 30px;
+  }
+  .info .output .icon > svg {
+    width: 30px;
+    height: 50px;
+  }
+}
+
+.score {
+  -webkit-transition: -webkit-transform 0.5s ease-out;
+  transition: -webkit-transform 0.5s ease-out;
+  transition: transform 0.5s ease-out;
+  transition: transform 0.5s ease-out, -webkit-transform 0.5s ease-out;
+  -webkit-box-flex: 1;
+      -ms-flex: 1 1 auto;
+          flex: 1 1 auto;
+  line-height: 70px;
+}
+
+@media only all and (max-width: 850px) {
+  .score {
+    line-height: 50px;
+  }
+}
+
+.level {
+  -webkit-transition: font-size 0.5s ease-out;
+  transition: font-size 0.5s ease-out;
+  -webkit-box-flex: 1;
+      -ms-flex: 1 1 auto;
+          flex: 1 1 auto;
+  line-height: 70px;
+}
+
+@media only all and (max-width: 850px) {
+  .level {
+    line-height: 50px;
   }
 }
 
@@ -174,6 +233,32 @@ body {
   padding-right: 30px;
 }
 
+.buttons .sound-btns {
+  background: -webkit-gradient(linear, left top, left bottom, from(rgba(8, 177, 95, 0.2)), to(rgba(33, 80, 162, 0.2)));
+  background: linear-gradient(rgba(8, 177, 95, 0.2), rgba(33, 80, 162, 0.2));
+  border: #218b58 2px solid;
+  border-radius: 5px;
+  overflow: hidden;
+  height: 48px;
+}
+
+.buttons .sound-btn {
+  -webkit-box-shadow: inset 1px 0px 15px 2px rgba(16, 46, 97, 0.7);
+          box-shadow: inset 1px 0px 15px 2px rgba(16, 46, 97, 0.7);
+  -webkit-transition: all 0.5s ease-out;
+  transition: all 0.5s ease-out;
+  -webkit-box-flex: 0;
+      -ms-flex: 0 0 50%;
+          flex: 0 0 50%;
+}
+
+.buttons .active {
+  background: -webkit-gradient(linear, left top, left bottom, from(#08b15f), to(#2150a2));
+  background: linear-gradient(#08b15f, #2150a2);
+  -webkit-box-shadow: none;
+          box-shadow: none;
+}
+
 @media only all and (max-width: 850px) {
   .buttons {
     -webkit-box-ordinal-group: 4;
@@ -188,10 +273,16 @@ body {
             flex-direction: row;
     -ms-flex-wrap: wrap;
         flex-wrap: wrap;
-    -ms-flex-pack: distribute;
-        justify-content: space-around;
-    padding-top: 40px;
-    padding-bottom: 20px;
+    -webkit-box-pack: center;
+        -ms-flex-pack: center;
+            justify-content: center;
+    padding-top: 30px;
+    padding-bottom: 10px;
+  }
+  .buttons .recordes,
+  .buttons .rules,
+  .buttons .sound-btns {
+    display: none;
   }
 }
 
@@ -217,7 +308,7 @@ body {
             flex: 0 0 140px;
     padding: 15px 0;
     font-size: 16px;
-    margin-bottom: 10px;
+    margin: 0 15px;
   }
 }
 
@@ -228,50 +319,6 @@ body {
 @media only all and (max-width: 850px) {
   .recordes {
     font-size: 16px;
-  }
-}
-
-.score {
-  -webkit-transition: all 0.5s ease-out;
-  transition: all 0.5s ease-out;
-}
-
-@media only all and (max-width: 850px) {
-  .score {
-    padding: 15px 0px 10px 50px;
-    width: 120px;
-    margin-right: 30px;
-    border-radius: 5px;
-    position: relative;
-  }
-  .score::before {
-    content: url(assets/star.svg);
-    position: absolute;
-    left: 10px;
-    top: 5px;
-    width: 30px;
-  }
-}
-
-.level {
-  -webkit-transition: all 0.5s ease-out;
-  transition: all 0.5s ease-out;
-}
-
-@media only all and (max-width: 850px) {
-  .level {
-    padding: 15px 0px 10px 50px;
-    width: 120px;
-    margin-left: 30px;
-    border-radius: 5px;
-    position: relative;
-  }
-  .level::before {
-    content: url(assets/trophy.svg);
-    position: absolute;
-    left: 10px;
-    top: 7px;
-    width: 30px;
   }
 }
 
@@ -289,61 +336,21 @@ body {
 }
 
 .sound-btns {
-  background: -webkit-gradient(linear, left top, left bottom, from(rgba(8, 177, 95, 0.2)), to(rgba(33, 80, 162, 0.2)));
-  background: linear-gradient(rgba(8, 177, 95, 0.2), rgba(33, 80, 162, 0.2));
-  border: #218b58 2px solid;
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
-  border-radius: 5px;
-  overflow: hidden;
-  height: 48px;
-}
-
-@media only all and (max-width: 850px) {
-  .sound-btns {
-    -webkit-box-flex: 0;
-        -ms-flex: 0 0 200px;
-            flex: 0 0 200px;
-  }
 }
 
 .sound-btn {
   background-color: transparent;
-  -webkit-box-flex: 0;
-      -ms-flex: 0 0 50%;
-          flex: 0 0 50%;
   border: none;
   outline: none;
-  position: relative;
-  -webkit-box-shadow: inset 1px 0px 15px 2px rgba(16, 46, 97, 0.7);
-          box-shadow: inset 1px 0px 15px 2px rgba(16, 46, 97, 0.7);
-  -webkit-transition: all 0.5s ease-out;
-  transition: all 0.5s ease-out;
 }
 
-.sound-btn::before {
-  position: absolute;
-  top: 6px;
-  left: 50%;
-  -webkit-transform: translateX(-50%);
-          transform: translateX(-50%);
-  width: 35%;
-}
-
-.sound-on::before {
-  content: url(assets/sound-on.svg);
-}
-
-.sound-off::before {
-  content: url(assets/sound-off.svg);
-}
-
-.active {
-  background: -webkit-gradient(linear, left top, left bottom, from(#08b15f), to(#2150a2));
-  background: linear-gradient(#08b15f, #2150a2);
-  -webkit-box-shadow: none;
-          box-shadow: none;
+.sound-btn svg {
+  width: 40px;
+  height: 40px;
+  fill: white;
 }
 
 .registration-form {
@@ -443,4 +450,119 @@ body {
 
 .notscrollable {
   overflow: hidden;
+}
+
+.menu-burger {
+  display: none;
+  position: absolute;
+  z-index: 5;
+  left: 5px;
+  top: 5px;
+  width: 50px;
+  height: 43px;
+}
+
+.menu-burger > span {
+  position: absolute;
+  width: 50px;
+  height: 5px;
+  background: -webkit-gradient(linear, left top, right top, from(#08b15f), to(#0498b3));
+  background: linear-gradient(90deg, #08b15f, #0498b3);
+  -webkit-box-shadow: 1px 1px 1px -1px rgba(2, 2, 2, 0.6);
+          box-shadow: 1px 1px 1px -1px rgba(2, 2, 2, 0.6);
+  border-radius: 2px;
+}
+
+.menu-burger > span:nth-child(2) {
+  top: 19px;
+}
+
+.menu-burger > span:nth-child(3) {
+  top: 38px;
+}
+
+@media only all and (max-width: 850px) {
+  .menu-burger {
+    display: block;
+  }
+}
+
+.aside-menu {
+  position: absolute;
+  height: 50vh;
+  background: linear-gradient(135deg, #c4f1e5 0% 45%, #f7c1f1 45% 100%);
+  background: linear-gradient(155deg, #39c0b7 0% 25%, #15b6cd 25% 65%, #8ccea4 65% 100%);
+  -webkit-box-shadow: 5px 5px 5px -5px rgba(2, 2, 2, 0.6);
+          box-shadow: 5px 5px 5px -5px rgba(2, 2, 2, 0.6);
+  border-radius: 0 0 5px 0;
+  padding: 90px 20px 70px 30px;
+  overflow: hidden;
+  visibility: hidden;
+  width: 0px;
+  -webkit-transition: width 0.5s ease-out;
+  transition: width 0.5s ease-out;
+}
+
+.aside-menu .close-btn {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  width: 30px;
+  height: 30px;
+  background-color: transparent;
+  border: none;
+  outline: none;
+}
+
+.aside-menu .close-btn svg {
+  fill: white;
+}
+
+.aside-menu .close-btn:active svg, .aside-menu .close-btn:hover svg {
+  fill: #a264ac;
+}
+
+.aside-menu > div {
+  margin-bottom: 30px;
+}
+
+.aside-menu .sound-btn {
+  text-align: left;
+  -webkit-box-flex: 0;
+      -ms-flex: 0 0 70px;
+          flex: 0 0 70px;
+}
+
+.aside-menu .sound-btn svg {
+  -webkit-transition: fill 0.5s ease-out;
+  transition: fill 0.5s ease-out;
+}
+
+.aside-menu .active svg {
+  fill: #a264ac;
+}
+
+.aside-btn {
+  -webkit-box-flex: 0;
+      -ms-flex: 0 0 200px;
+          flex: 0 0 200px;
+  height: 40px;
+  background-color: transparent;
+  border: none;
+  outline: none;
+  font-size: 24px;
+  text-transform: uppercase;
+  color: white;
+  font-family: 'Share Tech Mono', monospace;
+  z-index: -1;
+}
+
+.aside-btn:hover, .aside-btn:active {
+  color: #a264ac;
+}
+
+.aside-menu-opened {
+  z-index: 10;
+  visibility: visible;
+  width: 50%;
 }

@@ -181,16 +181,18 @@ class TetrisGame {
     this.context = context;
     this.playBtn = document.querySelector('.play');
     this.pauseBtn = document.querySelector('.pause');
-    this.rulesBtn = document.querySelector('.rules');
-    this.recordesBtn = document.querySelector('.recordes');
+    this.rulesBtns = document.querySelectorAll('.rules');
+    this.recordesBtns = document.querySelectorAll('.recordes');
     this.gameOver = document.querySelector('.game-over');
     this.scoreElem = document.querySelector('.score');
     this.levelElem = document.querySelector('.level');
-    this.soundOnBtn = document.querySelector('.sound-on');
-    this.soundOffBtn = document.querySelector('.sound-off');
-    this.soundBtns = document.querySelectorAll('.sound-btns');
+    this.soundOnBtns = document.querySelectorAll('.sound-on'); 
+    this.soundOffBtns = document.querySelectorAll('.sound-off'); 
     this.registrBtn = document.querySelector('.submit-btn');
     this.gameArea = document.querySelector('.game-area');
+    this.menuBurg = document.querySelector('.menu-burger');
+    this.closeBtn = document.querySelector('.close-btn');
+    this.menu = document.querySelector('.aside-menu');
     this.tetram = null;
     this.gameReq = null;
     this.count = 0;
@@ -239,7 +241,7 @@ class TetrisGame {
     
     this.playBtn.addEventListener('click', () => this.startPlay());
     this.pauseBtn.addEventListener('click', () => this.pauseGame());
-    this.soundBtns.forEach( btn => btn.addEventListener('click', (event) => this.switchSound(event)));
+  
     this.registrBtn.addEventListener('click', (event) => this.submitRegistr(event));
     document.addEventListener('keydown', (event) => {
       this.moveTetramino(event);
@@ -247,6 +249,18 @@ class TetrisGame {
     this.gameArea.addEventListener('touchmove', (event) => this.handleTouch(event));
     this.gameArea.addEventListener('touchstart', (event) => this.saveTouchSett(event));
     this.gameArea.addEventListener('touchend', (event) => this.rotateActiveTetramino(event));
+
+    this.menuBurg.addEventListener('click', (event) => this.openAsideMenu(event));
+    this.menuBurg.addEventListener('touchstart', (event) => this.openAsideMenu(event));
+
+    this.closeBtn.addEventListener('click', (event) => this.closeAsideMenu(event));
+    this.closeBtn.addEventListener('touchstart', (event) => this.closeAsideMenu(event));
+
+    this.soundOnBtns.forEach(btn => btn.addEventListener('click', (event) => this.turnOnTheSound(event)));
+    this.soundOnBtns.forEach(btn => btn.addEventListener('touchstart', (event) => this.turnOnTheSound(event)));
+
+    this.soundOffBtns.forEach(btn => btn.addEventListener('click', (event) => this.turnOffTheSound(event)));
+    this.soundOffBtns.forEach(btn => btn.addEventListener('touchstart', (event) => this.turnOffTheSound(event)));
   }
 
   startPlay() {
@@ -481,11 +495,18 @@ class TetrisGame {
     }
   }
 
-  switchSound(event) {
-    event.target.classList.add('active');
-    const siblingBtn = event.target.previousElementSibling ? event.target.previousElementSibling : event.target.nextElementSibling;
-    siblingBtn.classList.remove('active');
-    this.audioIsON = event.target.dataset.sound;
+  turnOnTheSound(event) {
+    event.preventDefault();
+    this.soundOnBtns.forEach( btn => btn.classList.add('active'));
+    this.soundOffBtns.forEach( btn => btn.classList.remove('active'));
+    this.audioIsON = 'on';
+  }
+
+  turnOffTheSound(event) {
+    event.preventDefault();
+    this.soundOffBtns.forEach( btn => btn.classList.add('active'));
+    this.soundOnBtns.forEach( btn => btn.classList.remove('active'));
+    this.audioIsON = 'off';
   }
 
   submitRegistr(event) {
@@ -493,6 +514,16 @@ class TetrisGame {
     const regForm = document.querySelector('.registration-form');
     this.nickname = regForm.querySelector('.nickname-input').value;
     regForm.classList.add('notvisible');
+  }
+
+  openAsideMenu(event) {
+    event.preventDefault();
+    this.menu.classList.add('aside-menu-opened');
+  }
+
+  closeAsideMenu(event) {
+    event.preventDefault();
+    this.menu.classList.remove('aside-menu-opened');
   }
 
 }
@@ -527,3 +558,4 @@ function recalculateBlockSize() {
 window.addEventListener('resize', recalculateBlockSize);
 
 
+console.log(game.menuBurg)
