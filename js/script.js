@@ -231,7 +231,6 @@ class TetrisGame {
     this.touchmoveEventY = [];
     this.touchmoveEventTimer = [];
     this.touchmoveCounter = 0;
-    this.touchStep = 30;
     this.touchСoordinates = {
       touchStartX : 0,
       touchStartY : 0,
@@ -239,10 +238,15 @@ class TetrisGame {
       touchEndX : 0
     }
     
-    this.playBtn.addEventListener('click', () => this.startPlay());
-    this.pauseBtn.addEventListener('click', () => this.pauseGame());
+    this.playBtn.addEventListener('click', (event) => this.startPlay(event));
+    this.playBtn.addEventListener('touchstart', (event) => this.startPlay(event));
+
+    this.pauseBtn.addEventListener('click', (event) => this.pauseGame(event));
+    this.pauseBtn.addEventListener('touchstart', (event) => this.pauseGame(event));
   
     this.registrBtn.addEventListener('click', (event) => this.submitRegistr(event));
+    this.registrBtn.addEventListener('touchstart', (event) => this.submitRegistr(event));
+
     document.addEventListener('keydown', (event) => {
       this.moveTetramino(event);
     });
@@ -263,7 +267,8 @@ class TetrisGame {
     this.soundOffBtns.forEach(btn => btn.addEventListener('touchstart', (event) => this.turnOffTheSound(event)));
   }
 
-  startPlay() {
+  startPlay(event) {
+    event.preventDefault();
     cancelAnimationFrame(this.gameReq);
     this.gameReq = null;
     this.onPause = false;
@@ -331,11 +336,11 @@ class TetrisGame {
     this.touchmoveEventY.push(touchY);
     this.touchmoveEventTimer.push(this.touchmoveCounter);
 
-    if (this.touchmoveEventX[this.touchmoveEventX.length - 1] > this.touchmoveEventX[0] + this.touchStep) {
+    if (this.touchmoveEventX[this.touchmoveEventX.length - 1] > this.touchmoveEventX[0] + boardSettings.blockSize) {
       this.moveActiveTetram('ArrowRight', this.audioMove);
-    } else if (this.touchmoveEventX[this.touchmoveEventX.length - 1] < this.touchmoveEventX[0] - this.touchStep) {
+    } else if (this.touchmoveEventX[this.touchmoveEventX.length - 1] < this.touchmoveEventX[0] - boardSettings.blockSize) {
       this.moveActiveTetram('ArrowLeft', this.audioMove);
-    } else if (this.touchmoveEventY[this.touchmoveEventY.length - 1] > this.touchmoveEventY[0] + this.touchStep 
+    } else if (this.touchmoveEventY[this.touchmoveEventY.length - 1] > this.touchmoveEventY[0] + boardSettings.blockSize 
       && this.touchmoveEventTimer[this.touchmoveEventTimer.length - 1] - this.touchmoveEventTimer[0] < 5) {
         let newPosition = this.eventCodes['Space'](this.board.activeTetramino);
         while (this.board.validatePos(newPosition)) {
@@ -345,7 +350,7 @@ class TetrisGame {
         this.playAudio(this.audioDrop);
         this.clearTouchCoordArr();
         this.clearTouchTimer();
-    } else if (this.touchmoveEventY[this.touchmoveEventY.length - 1] > this.touchmoveEventY[0] + this.touchStep) {
+    } else if (this.touchmoveEventY[this.touchmoveEventY.length - 1] > this.touchmoveEventY[0] + boardSettings.blockSize) {
       this.moveActiveTetram('ArrowDown', this.audioMove);
     } 
   }
@@ -373,8 +378,8 @@ class TetrisGame {
     if (!this.board.activeTetramino) return;
     this.touchСoordinates.touchEndX = event.changedTouches[0].pageX;
     this.touchСoordinates.touchEndY = event.changedTouches[0].pageY;
-    if (Math.abs(this.touchСoordinates.touchEndX - this.touchСoordinates.touchStartX) <= this.touchStep &&
-        this.touchСoordinates.touchEndY - this.touchСoordinates.touchStartY <= this.touchStep) {
+    if (Math.abs(this.touchСoordinates.touchEndX - this.touchСoordinates.touchStartX) <= boardSettings.blockSize &&
+        this.touchСoordinates.touchEndY - this.touchСoordinates.touchStartY <= boardSettings.blockSize) {
           const newPosition = this.eventCodes['ArrowUp'](this.board.activeTetramino);
           if (this.board.validatePos(newPosition)) {
             this.board.activeTetramino.updatePos(newPosition);
@@ -475,7 +480,7 @@ class TetrisGame {
     }
   }
 
-  pauseGame() {
+  pauseGame(event) {
     if (!this.board.activeTetramino) return;
     if(!this.onPause) {
       this.board.activeTetramino.speedY = 0;

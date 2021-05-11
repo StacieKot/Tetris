@@ -168,7 +168,7 @@ body {
         flex-wrap: wrap;
   }
   .info .output {
-    margin: 43px 30px 20px 0;
+    margin: 43px 10px 20px 0;
     -webkit-box-flex: 0;
         -ms-flex: 0 0 140px;
             flex: 0 0 140px;
