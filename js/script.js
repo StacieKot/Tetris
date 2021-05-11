@@ -280,6 +280,7 @@ function createGame(){
       this.gameReq = null;
       this.onPause = false;
       this.pauseBtnCont.innerHTML = 'Pause';
+      this.pauseBtn.querySelector('.pause-svg').setAttribute('xlink:href', 'assets/sprites.svg#pause');
       this.level = 1;
       this.score = 0;
       this.timer = 32;
@@ -495,14 +496,14 @@ function createGame(){
         this.onPause = true;
         this.pauseBtnCont.innerHTML = 'Resume';
         if (window.matchMedia("(max-width:850px)").matches) {
-          this.pauseBtn.classList.add('resume');
+          this.pauseBtn.querySelector('.pause-svg').setAttribute('xlink:href', 'assets/sprites.svg#play');
         }
       } else {
         this.board.activeTetramino.speedY = 1;
         this.onPause = false;
         this.pauseBtnCont.innerHTML = 'Pause';
         if (window.matchMedia("(max-width:850px)").matches) {
-          this.pauseBtn.classList.remove('resume');
+          this.pauseBtn.querySelector('.pause-svg').setAttribute('xlink:href', 'assets/sprites.svg#pause');
         }
       }
     }
