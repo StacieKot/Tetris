@@ -385,7 +385,7 @@ body {
   overflow: hidden;
   visibility: hidden;
   width: 0px;
-  transition: width 0.3s ease-out;
+  transition: width 0.2s ease-out;
   
   .close-btn {
     position: absolute;
@@ -432,7 +432,7 @@ body {
 }
 
 .aside-btn {
-  flex: 0 0 200px;
+  flex: 0 0 0px;
   height: 40px;
   background-color: transparent;
   border: none;
@@ -441,7 +441,7 @@ body {
   text-transform: uppercase;
   color: white;
   font-family: 'Share Tech Mono', monospace;
-  z-index: -1;
+ 
   &:hover,
   &:active {
     color: rgb(162, 100, 172);
@@ -452,4 +452,5 @@ body {
   z-index: 10;
   visibility: visible;
   width: 50%;
+
 }
