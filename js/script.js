@@ -3,7 +3,8 @@
 (function createGame(){
   const columns = 10;
   const rows = 20;
-  let blockSize = calculateWindowSize();
+  const blockSize = calculateWindowSize();
+  console.log(blockSize);
 
   const boardSettings = {
     columns : columns,
@@ -556,7 +557,7 @@
   }
   
   function recalculateBlockSize() {
-    blockSize = calculateWindowSize();
+    const blockSize = calculateWindowSize();
     boardSettings.blockSize = blockSize;
     context.canvas.width = boardSettings.columns * boardSettings.blockSize;
     context.canvas.height = boardSettings.rows * boardSettings.blockSize;
