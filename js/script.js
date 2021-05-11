@@ -218,6 +218,7 @@ function createGame(){
       };
       this.audioClearRows = new Audio('assets/audio/clear.rf64');
       this.audioMove = new Audio('assets/audio/sounds_block-rotate.mp3');
+      this.audioMove.setAttribute('preload', 'auto');
       this.audioMoveDown = new Audio('assets/audio/selection.rf64');
       this.audioGameOver = new Audio('assets/audio/gameover.rf64');
       this.audioDrop = new Audio('assets/audio/drop.mp3');
