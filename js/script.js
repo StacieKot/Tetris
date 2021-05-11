@@ -185,6 +185,7 @@ function createGame(){
       this.context = context;
       this.playBtn = document.querySelector('.play');
       this.pauseBtn = document.querySelector('.pause');
+      this.pauseBtnCont = this.pauseBtn.querySelector('.btn-text');
       this.rulesBtns = document.querySelectorAll('.rules');
       this.recordesBtns = document.querySelectorAll('.recordes');
       this.gameOver = document.querySelector('.game-over');
@@ -197,6 +198,7 @@ function createGame(){
       this.menuBurg = document.querySelector('.menu-burger');
       this.closeBtn = document.querySelector('.close-btn');
       this.menu = document.querySelector('.aside-menu');
+      this.dropBtn = document.querySelector('.drop');
       this.tetram = null;
       this.gameReq = null;
       this.count = 0;
@@ -257,6 +259,7 @@ function createGame(){
       this.gameArea.addEventListener('touchmove', (event) => this.handleTouch(event));
       this.gameArea.addEventListener('touchstart', (event) => this.saveTouchSett(event));
       this.gameArea.addEventListener('touchend', (event) => this.rotateActiveTetramino(event));
+      this.dropBtn.addEventListener('touchstart', (event) => this.drop(event));
   
       this.menuBurg.addEventListener('click', (event) => this.openAsideMenu(event));
       this.menuBurg.addEventListener('touchstart', (event) => this.openAsideMenu(event));
@@ -276,7 +279,7 @@ function createGame(){
       cancelAnimationFrame(this.gameReq);
       this.gameReq = null;
       this.onPause = false;
-      this.pauseBtn.innerHTML = 'Pause';
+      this.pauseBtnCont.innerHTML = 'Pause';
       this.level = 1;
       this.score = 0;
       this.timer = 32;
@@ -344,16 +347,6 @@ function createGame(){
         this.moveActiveTetram('ArrowRight');
       } else if (this.touchmoveEventX[this.touchmoveEventX.length - 1] < this.touchmoveEventX[0] - boardSettings.blockSize) {
         this.moveActiveTetram('ArrowLeft');
-      } else if (this.touchmoveEventY[this.touchmoveEventY.length - 1] > this.touchmoveEventY[0] + boardSettings.blockSize 
-        && this.touchmoveEventTimer[this.touchmoveEventTimer.length - 1] - this.touchmoveEventTimer[0] < 3) {
-          let newPosition = this.eventCodes['Space'](this.board.activeTetramino);
-          while (this.board.validatePos(newPosition)) {
-            this.board.activeTetramino.updatePos(newPosition);
-            newPosition = this.eventCodes['Space'](this.board.activeTetramino);
-          }
-          this.playAudio(this.audioDrop);
-          this.clearTouchCoordArr();
-          this.clearTouchTimer();
       } else if (this.touchmoveEventY[this.touchmoveEventY.length - 1] > this.touchmoveEventY[0] + boardSettings.blockSize) {
         this.moveActiveTetram('ArrowDown');
       } 
@@ -369,6 +362,17 @@ function createGame(){
       } 
       this.clearTouchCoordArr();
       this.clearTouchTimer();
+    }
+
+    drop(event) {
+      event.preventDefault();
+      if(!this.board.activeTetramino) return;
+      let newPosition = this.eventCodes['Space'](this.board.activeTetramino);
+      while (this.board.validatePos(newPosition)) {
+        this.board.activeTetramino.updatePos(newPosition);
+        newPosition = this.eventCodes['Space'](this.board.activeTetramino);
+      }
+      this.playAudio(this.audioDrop);
     }
   
     saveTouchSett(event) {
@@ -489,11 +493,17 @@ function createGame(){
       if(!this.onPause) {
         this.board.activeTetramino.speedY = 0;
         this.onPause = true;
-        this.pauseBtn.innerHTML = 'Resume';
+        this.pauseBtnCont.innerHTML = 'Resume';
+        if (window.matchMedia("(max-width:850px)").matches) {
+          this.pauseBtn.classList.add('resume');
+        }
       } else {
         this.board.activeTetramino.speedY = 1;
         this.onPause = false;
-        this.pauseBtn.innerHTML = 'Pause';
+        this.pauseBtnCont.innerHTML = 'Pause';
+        if (window.matchMedia("(max-width:850px)").matches) {
+          this.pauseBtn.classList.remove('resume');
+        }
       }
     }
   

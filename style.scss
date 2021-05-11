@@ -205,7 +205,7 @@ body {
     flex-wrap: wrap;
     justify-content: center;
     padding-top: 30px;
-    padding-bottom: 10px;
+    padding-bottom: 20px;
 
     .recordes,
     .rules,
@@ -217,7 +217,7 @@ body {
 }
 
 .btn {
-  background: linear-gradient(#08b15f, rgba(33,80,162, 1));
+  background: linear-gradient(#08b15f, rgba(33,80,162, 1) 100%);
   font-family: 'Press Start 2P', cursive;
   font-size: 20px;
   color: white;
@@ -228,11 +228,54 @@ body {
   outline: none;
   border: none;
   cursor: pointer;
+  transition: box-shadow 0.2s ease-out;
+  
+  &:hover,
+  &:active {
+    box-shadow: 0px 5px 10px 2px rgba(34, 60, 80, 0.3);
+  }
+
   @media only all and (max-width: $tablet) {
-    flex: 0 0 140px;
-    padding: 15px 0;
-    font-size: 16px;
-    margin: 0 15px;
+    flex: 0 0 55px;
+    height: 55px;
+    border-radius: 50%;
+    margin: 0 20px;
+    background: none;
+    
+    span {
+      display: none;
+    }
+
+  }
+}
+
+.play {
+  @media only all and (max-width: $tablet) {
+    background: url(assets/power.svg) no-repeat;
+    background-size: cover;
+  }
+}
+
+.pause {
+  @media only all and (max-width: $tablet) {
+    background: url(assets/pause.svg) no-repeat;
+    background-size: cover;
+  }
+}
+
+.resume {
+  @media only all and (max-width: $tablet) {
+    background: url(assets/play-button.svg) no-repeat;
+    background-size: cover;
+  }
+}
+
+.drop {
+  display: none;
+  @media only all and (max-width: $tablet) {
+    display: block;
+    background: url(assets/drop.svg) no-repeat;
+    background-size: cover;
   }
 }
 
@@ -384,7 +427,7 @@ body {
   overflow: hidden;
   visibility: hidden;
   width: 0px;
-  transition: width 0.2s ease-out;
+  transition: width 0.3s ease-out;
   
   .close-btn {
     position: absolute;
@@ -414,6 +457,11 @@ body {
     margin-bottom: 30px;
   }
 
+  .sound-btns {
+    width: 0px;
+    overflow: hidden;
+  }
+
   .sound-btn {
     text-align: left;
     flex: 0 0 70px;
@@ -431,15 +479,17 @@ body {
 }
 
 .aside-btn {
-  flex: 0 0 0px;
+  width: 0px;
   height: 40px;
   background-color: transparent;
   border: none;
   outline: none;
   font-size: 24px;
   text-transform: uppercase;
+  text-align: left;
   color: white;
   font-family: 'Share Tech Mono', monospace;
+  overflow: hidden;
  
   &:hover,
   &:active {
@@ -451,5 +501,13 @@ body {
   z-index: 10;
   visibility: visible;
   width: 50%;
+
+  .sound-btns {
+    width: 100%;
+  }
+
+  .aside-btn {
+    width: 150px;
+  }
 
 }

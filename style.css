@@ -278,7 +278,7 @@ body {
         -ms-flex-pack: center;
             justify-content: center;
     padding-top: 30px;
-    padding-bottom: 10px;
+    padding-bottom: 20px;
   }
   .buttons .recordes,
   .buttons .rules,
@@ -289,7 +289,7 @@ body {
 
 .btn {
   background: -webkit-gradient(linear, left top, left bottom, from(#08b15f), to(#2150a2));
-  background: linear-gradient(#08b15f, #2150a2);
+  background: linear-gradient(#08b15f, #2150a2 100%);
   font-family: 'Press Start 2P', cursive;
   font-size: 20px;
   color: white;
@@ -300,16 +300,62 @@ body {
   outline: none;
   border: none;
   cursor: pointer;
+  -webkit-transition: -webkit-box-shadow 0.2s ease-out;
+  transition: -webkit-box-shadow 0.2s ease-out;
+  transition: box-shadow 0.2s ease-out;
+  transition: box-shadow 0.2s ease-out, -webkit-box-shadow 0.2s ease-out;
+}
+
+.btn:hover, .btn:active {
+  -webkit-box-shadow: 0px 5px 10px 2px rgba(34, 60, 80, 0.3);
+          box-shadow: 0px 5px 10px 2px rgba(34, 60, 80, 0.3);
 }
 
 @media only all and (max-width: 850px) {
   .btn {
     -webkit-box-flex: 0;
-        -ms-flex: 0 0 140px;
-            flex: 0 0 140px;
-    padding: 15px 0;
-    font-size: 16px;
-    margin: 0 15px;
+        -ms-flex: 0 0 55px;
+            flex: 0 0 55px;
+    height: 55px;
+    border-radius: 50%;
+    margin: 0 20px;
+    background: none;
+  }
+  .btn span {
+    display: none;
+  }
+}
+
+@media only all and (max-width: 850px) {
+  .play {
+    background: url(assets/power.svg) no-repeat;
+    background-size: cover;
+  }
+}
+
+@media only all and (max-width: 850px) {
+  .pause {
+    background: url(assets/pause.svg) no-repeat;
+    background-size: cover;
+  }
+}
+
+@media only all and (max-width: 850px) {
+  .resume {
+    background: url(assets/play-button.svg) no-repeat;
+    background-size: cover;
+  }
+}
+
+.drop {
+  display: none;
+}
+
+@media only all and (max-width: 850px) {
+  .drop {
+    display: block;
+    background: url(assets/drop.svg) no-repeat;
+    background-size: cover;
   }
 }
 
@@ -500,8 +546,8 @@ body {
   overflow: hidden;
   visibility: hidden;
   width: 0px;
-  -webkit-transition: width 0.2s ease-out;
-  transition: width 0.2s ease-out;
+  -webkit-transition: width 0.3s ease-out;
+  transition: width 0.3s ease-out;
 }
 
 .aside-menu .close-btn {
@@ -527,6 +573,11 @@ body {
   margin-bottom: 30px;
 }
 
+.aside-menu .sound-btns {
+  width: 0px;
+  overflow: hidden;
+}
+
 .aside-menu .sound-btn {
   text-align: left;
   -webkit-box-flex: 0;
@@ -544,17 +595,17 @@ body {
 }
 
 .aside-btn {
-  -webkit-box-flex: 0;
-      -ms-flex: 0 0 0px;
-          flex: 0 0 0px;
+  width: 0px;
   height: 40px;
   background-color: transparent;
   border: none;
   outline: none;
   font-size: 24px;
   text-transform: uppercase;
+  text-align: left;
   color: white;
   font-family: 'Share Tech Mono', monospace;
+  overflow: hidden;
 }
 
 .aside-btn:hover, .aside-btn:active {
@@ -565,4 +616,12 @@ body {
   z-index: 10;
   visibility: visible;
   width: 50%;
+}
+
+.aside-menu-opened .sound-btns {
+  width: 100%;
+}
+
+.aside-menu-opened .aside-btn {
+  width: 150px;
 }
