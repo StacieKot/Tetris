@@ -45,6 +45,7 @@ body {
   background-size: cover;
   height: 100vh;
   position: relative;
+  visibility: hidden;
 }
 
 @media only all and (max-width: 850px) {

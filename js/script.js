@@ -32,6 +32,7 @@ function createGame(){
   context.canvas.height = boardSettings.rows * boardSettings.blockSize;
   canvas.classList.add('game-area');
   document.querySelector('.tetris').appendChild(canvas);
+  document.querySelector('.container').style.visibility = "visible";
   
   class Board {
     constructor(context, colors) {
