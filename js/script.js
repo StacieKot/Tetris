@@ -337,11 +337,11 @@ class TetrisGame {
     this.touchmoveEventTimer.push(this.touchmoveCounter);
 
     if (this.touchmoveEventX[this.touchmoveEventX.length - 1] > this.touchmoveEventX[0] + boardSettings.blockSize) {
-      this.moveActiveTetram('ArrowRight', this.audioMove);
+      this.moveActiveTetram('ArrowRight');
     } else if (this.touchmoveEventX[this.touchmoveEventX.length - 1] < this.touchmoveEventX[0] - boardSettings.blockSize) {
-      this.moveActiveTetram('ArrowLeft', this.audioMove);
+      this.moveActiveTetram('ArrowLeft');
     } else if (this.touchmoveEventY[this.touchmoveEventY.length - 1] > this.touchmoveEventY[0] + boardSettings.blockSize 
-      && this.touchmoveEventTimer[this.touchmoveEventTimer.length - 1] - this.touchmoveEventTimer[0] < 5) {
+      && this.touchmoveEventTimer[this.touchmoveEventTimer.length - 1] - this.touchmoveEventTimer[0] < 3) {
         let newPosition = this.eventCodes['Space'](this.board.activeTetramino);
         while (this.board.validatePos(newPosition)) {
           this.board.activeTetramino.updatePos(newPosition);
@@ -481,6 +481,7 @@ class TetrisGame {
   }
 
   pauseGame(event) {
+    event.preventDefault();
     if (!this.board.activeTetramino) return;
     if(!this.onPause) {
       this.board.activeTetramino.speedY = 0;
