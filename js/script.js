@@ -1,6 +1,6 @@
 'use strict';
 
-(function createGame(){
+function createGame(){
   const columns = 10;
   const rows = 20;
   const blockSize = calculateWindowSize();
@@ -565,5 +565,7 @@
   
   window.addEventListener('resize', recalculateBlockSize);
   
-})();
+};
+
+window.addEventListener('load', createGame);
 
