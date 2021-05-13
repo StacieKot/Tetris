@@ -571,7 +571,7 @@ class App {
     this.containerElem = null;
     this.SPAState = {};
 
-    window.addEventListener('hashchange', () => this.switchToStateFromURLHash());
+    // window.addEventListener('hashchange', () => this.switchToStateFromURLHash());
    
   }
 
@@ -601,12 +601,14 @@ class App {
     }
   }
 
- switchToState(newState) {
+  switchToState(newState) {
     const stateStr = newState.pagename;
     location.hash = stateStr;
   }
   
   createGamePage() {
+    document.body.innerHTML = '';
+    console.log('ffff');
     const containerElem = this.createElem('div','container');
     document.body.appendChild(containerElem);
 
@@ -652,11 +654,14 @@ class App {
 
     containerElem.appendChild(gameWrapper);
 
+    console.log('ffddf');
+
     createGame();
 
   }
 
   createMainPage() {
+    document.body.innerHTML = '';
     const containerElem = this.createElem('div','container');
     document.body.appendChild(containerElem);
     const menu = this.createElem('div', 'menu');
@@ -700,3 +705,4 @@ const terisApp = new App("container");
 terisApp.switchToStateFromURLHash();
 
 
+window.addEventListener('hashchange', () => terisApp.switchToStateFromURLHash());
