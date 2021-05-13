@@ -175,6 +175,7 @@ body {
   }
   .info .output:nth-child(2) {
     margin-right: 0;
+    margin-left: 10px;
   }
   .info .output .icon {
     -webkit-box-flex: 0;
@@ -279,10 +280,25 @@ body {
     padding-top: 30px;
     padding-bottom: 20px;
   }
-  .buttons .recordes,
-  .buttons .rules,
   .buttons .sound-btns {
-    display: none;
+    background: none;
+    border: none;
+    position: absolute;
+    top: 0;
+    right: 0;
+    border-radius: 5px 0 0 5px;
+  }
+  .buttons .sound-btn {
+    background: -webkit-gradient(linear, left top, left bottom, from(rgba(255, 166, 141, 0.5)), to(rgba(255, 48, 81, 0.5)));
+    background: linear-gradient(rgba(255, 166, 141, 0.5), rgba(255, 48, 81, 0.5));
+    -webkit-box-shadow: none;
+            box-shadow: none;
+  }
+  .buttons .active {
+    background: -webkit-gradient(linear, left top, left bottom, from(#ffa68d), to(#ff3051));
+    background: linear-gradient(#ffa68d, #ff3051);
+    -webkit-box-shadow: none;
+            box-shadow: none;
   }
 }
 
@@ -377,16 +393,6 @@ body {
   }
   .drop svg {
     top: 55%;
-  }
-}
-
-.recordes {
-  font-size: 18px;
-}
-
-@media only all and (max-width: 850px) {
-  .recordes {
-    font-size: 16px;
   }
 }
 
@@ -555,15 +561,14 @@ body {
   }
 }
 
-.menu {
+.popup {
   position: absolute;
   left: 50%;
   top: 50%;
   -webkit-transform: translate(-50%, -50%);
           transform: translate(-50%, -50%);
-  width: 500px;
+  width: 600px;
   min-height: 500px;
-  background: linear-gradient(155deg, #39c0b7 0% 25%, #15b6cd 25% 65%, #8ccea4 65% 100%);
   background: linear-gradient(155deg, #8ccea4 0% 25%, #15b6cd 25% 65%, #39c0b7 65% 100%);
   -webkit-box-shadow: 5px 5px 15px -5px rgba(2, 2, 2, 0.6);
           box-shadow: 5px 5px 15px -5px rgba(2, 2, 2, 0.6);
@@ -571,12 +576,38 @@ body {
   padding: 30px;
 }
 
-.menu .title {
+.popup .title {
   font-size: 24px;
   color: white;
   text-transform: uppercase;
   text-align: center;
-  margin-bottom: 70px;
+  margin-bottom: 60px;
+}
+
+.popup .subtitle {
+  font-size: 16px;
+  color: #a264ac;
+  text-transform: uppercase;
+  text-align: center;
+  margin: 30px 0 20px 0;
+}
+
+.popup .rules {
+  font-family: 'Share Tech Mono', monospace;
+  color: white;
+  font-size: 18px;
+  text-align: center;
+}
+
+.popup .rules-row {
+  margin-bottom: 15px;
+}
+
+@media only all and (max-width: 850px) {
+  .popup {
+    width: 90%;
+    min-height: 300px;
+  }
 }
 
 .menu .menu-btn {
@@ -625,6 +656,7 @@ body {
   color: white;
   font-family: 'Share Tech Mono', monospace;
   overflow: hidden;
+  margin-top: 30px;
 }
 
 .menu-btn:hover, .menu-btn:active {

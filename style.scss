@@ -132,6 +132,7 @@ body {
 
       &:nth-child(2) {
         margin-right: 0;
+        margin-left: 10px
       }
 
       .icon {
@@ -206,10 +207,23 @@ body {
     padding-top: 30px;
     padding-bottom: 20px;
 
-    .recordes,
-    .rules,
     .sound-btns {
-      display: none;
+      background: none;
+      border: none;
+      position: absolute;
+      top: 0;
+      right: 0;
+      border-radius: 5px 0 0 5px;
+    }
+
+    .sound-btn {
+      background: linear-gradient(rgba(255, 166, 141, 0.5), rgba(255, 48, 81, 0.5));
+      box-shadow: none;
+    }
+
+    .active {
+      background: linear-gradient(#ffa68d, #ff3051);
+      box-shadow: none;
     }
     
   }
@@ -303,10 +317,7 @@ body {
 }
 
 .recordes {
-  font-size: 18px;
-  @media only all and (max-width: $tablet) {
-      font-size: 16px;
-  }
+  
 }
 
 .active-score {
@@ -439,14 +450,13 @@ body {
   }
 }
 
-.menu {
+.popup {
   position: absolute;
   left: 50%;
   top: 50%;
   transform: translate(-50%,- 50%);
-  width: 500px;
+  width: 600px;
   min-height: 500px;
-  background: linear-gradient(155deg, rgb(57, 192, 183) 0% 25%, rgb(21, 182, 205) 25% 65%, rgb(140, 206, 164) 65% 100%);
   background: linear-gradient(155deg, rgb(140, 206, 164) 0% 25%, rgb(21, 182, 205) 25% 65%, rgb(57, 192, 183) 65% 100%);
   box-shadow: 5px 5px 15px -5px rgba(2, 2, 2, 0.6);
   border-radius:5px;
@@ -457,8 +467,36 @@ body {
     color: white;
     text-transform: uppercase;
     text-align: center;
-    margin-bottom: 70px;
+    margin-bottom: 60px;
   }
+
+  .subtitle {
+    font-size: 16px;
+    color: rgb(162, 100, 172);
+    text-transform: uppercase;
+    text-align: center;
+    margin: 30px 0 20px 0;
+  }
+
+  .rules {
+    font-family: 'Share Tech Mono', monospace;
+    color: white;
+    font-size: 18px;
+    text-align: center;
+  }
+
+  .rules-row {
+    margin-bottom: 15px;
+  }
+
+  @media only all and (max-width: $tablet) {
+    width: 90%;
+    min-height: 300px;
+  }
+
+}
+
+.menu {
 
   .menu-btn {
     display: block;
@@ -494,7 +532,6 @@ body {
   @media only all and (max-width: $tablet) {
     width: 90%;
     min-height: 300px;
-
   }
 
 }
@@ -511,6 +548,7 @@ body {
   color: white;
   font-family: 'Share Tech Mono', monospace;
   overflow: hidden;
+  margin-top: 30px;
  
   &:hover,
   &:active {

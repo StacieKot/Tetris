@@ -571,8 +571,7 @@ class App {
     this.containerElem = null;
     this.SPAState = {};
 
-    // window.addEventListener('hashchange', () => this.switchToStateFromURLHash());
-   
+    window.addEventListener('hashchange', () => this.switchToStateFromURLHash());
   }
 
   switchToStateFromURLHash() {
@@ -593,10 +592,10 @@ class App {
         this.createGamePage();
         break;
       case 'Rules':
-      
+        this.createRulesPage();
         break;
       case 'Recordes':
-
+        this.createRecordesPage();
         break;
     }
   }
@@ -664,17 +663,53 @@ class App {
     document.body.innerHTML = '';
     const containerElem = this.createElem('div','container');
     document.body.appendChild(containerElem);
-    const menu = this.createElem('div', 'menu');
+    const menu = this.createElem('div', 'menu popup');
     const title = this.createElem('h1', 'title', 'Tetris');
     const newGame = this.createElem('button', 'menu-btn', 'New Game');
     newGame.addEventListener('click', () => this.switchToState({pagename: 'Game'}));
+    newGame.addEventListener('touchstart', () => this.switchToState({pagename: 'Game'}));
     const rules = this.createElem('button', 'menu-btn', 'Rules');
+    rules.addEventListener('click', () => this.switchToState({pagename: 'Rules'}));
+    rules.addEventListener('touchstart', () => this.switchToState({pagename: 'Rules'}));
     const recordes = this.createElem('button', 'menu-btn', 'Recordes');
+    recordes.addEventListener('click', () => this.switchToState({pagename: 'Recordes'}));
+    recordes.addEventListener('touchstart', () => this.switchToState({pagename: 'Recordes'}));
     const elements = [title, newGame, rules, recordes];
     this.addChildren(elements, menu);
     containerElem.appendChild(menu);
   }
   
+  createRecordesPage() {
+    document.body.innerHTML = '';
+    const containerElem = this.createElem('div','container');
+    document.body.appendChild(containerElem);
+    const recordesHTMLElem = this.createElem('div', 'recordes popup');
+    const title = this.createElem('h1', 'title', 'Recordes');
+
+  
+
+    this.addChildren([title], recordesHTMLElem);
+    containerElem.appendChild(recordesHTMLElem);
+  
+  }
+
+  createRulesPage() {
+    document.body.innerHTML = '';
+    const containerElem = this.createElem('div','container');
+    document.body.appendChild(containerElem);
+    const rulesHTMLElem = this.createElem('div', 'rules popup');
+    const title = this.createElem('h1', 'title', 'Rules');
+    const objective = this.createElem('div', 'rules', 'Try to fit as many tetrominoes as possible on the screen by clearing rows!');
+    const subtitleDesk = this.createElem('h2', 'subtitle', 'For desktops');
+    const desktopRulesInnerHtml = '<div class="rules-row">Press the UP key to rotate the tetrimino</div><div class="rules-row">Press the DOWN key to accelerate the tetromino</div><div class="rules-row">Press the LEFT and RIGHT keys to move the tetromino respective diriction</div><div class="rules-row">Press SPACE key to drop the tetromino</div>';
+    const desktopRules = this.createElem('div', 'rules', desktopRulesInnerHtml);
+    const subtitleMob = this.createElem('h2', 'subtitle', 'For mobiles');
+    const mobileRulesInnerHtml = '<div class="rules-row">Touch the play area to rotate the tetrimino</div><div class="rules-row">To move the tetromino touch it and move in respective direction</div><div class="rules-row">Touch the DOWN button to drop the tetromino</div>';
+    const mobileRules = this.createElem('div', 'rules', mobileRulesInnerHtml);
+    this.addChildren([title, objective, subtitleDesk, desktopRules, subtitleMob, mobileRules], rulesHTMLElem);
+    containerElem.appendChild(rulesHTMLElem);
+  }
+
   createElem(elem, styleClass, value) {
     const HTMLelem = document.createElement(elem);
     if (styleClass) {
@@ -690,19 +725,10 @@ class App {
     arr.forEach(elem => parentElem.appendChild(elem));
   }
 
-  createRecordesPage() {
-  
-  }
-
-  createRulesPage() {
-    
-  }
-
-
 }
 
 const terisApp = new App("container");
 terisApp.switchToStateFromURLHash();
 
 
-window.addEventListener('hashchange', () => terisApp.switchToStateFromURLHash());
+// window.addEventListener('hashchange', () => terisApp.switchToStateFromURLHash());
