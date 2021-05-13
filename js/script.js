@@ -186,18 +186,12 @@ function createGame(){
       this.playBtn = document.querySelector('.play');
       this.pauseBtn = document.querySelector('.pause');
       this.pauseBtnCont = this.pauseBtn.querySelector('.btn-text');
-      this.rulesBtns = document.querySelectorAll('.rules');
-      this.recordesBtns = document.querySelectorAll('.recordes');
       this.gameOver = document.querySelector('.game-over');
       this.scoreElem = document.querySelector('.score');
       this.levelElem = document.querySelector('.level');
       this.soundOnBtns = document.querySelectorAll('.sound-on'); 
       this.soundOffBtns = document.querySelectorAll('.sound-off'); 
-      this.registrBtn = document.querySelector('.submit-btn');
       this.gameArea = document.querySelector('.game-area');
-      this.menuBurg = document.querySelector('.menu-burger');
-      this.closeBtn = document.querySelector('.close-btn');
-      this.menu = document.querySelector('.aside-menu');
       this.dropBtn = document.querySelector('.drop');
       this.tetram = null;
       this.gameReq = null;
@@ -250,9 +244,6 @@ function createGame(){
   
       this.pauseBtn.addEventListener('click', (event) => this.pauseGame(event));
       this.pauseBtn.addEventListener('touchstart', (event) => this.pauseGame(event));
-    
-      this.registrBtn.addEventListener('click', (event) => this.submitRegistr(event));
-      this.registrBtn.addEventListener('touchstart', (event) => this.submitRegistr(event));
   
       document.addEventListener('keydown', (event) => {
         this.moveTetramino(event);
@@ -261,20 +252,16 @@ function createGame(){
       this.gameArea.addEventListener('touchstart', (event) => this.saveTouchSett(event));
       this.gameArea.addEventListener('touchend', (event) => this.rotateActiveTetramino(event));
       this.dropBtn.addEventListener('touchstart', (event) => this.drop(event));
-  
-      this.menuBurg.addEventListener('click', (event) => this.openAsideMenu(event));
-      this.menuBurg.addEventListener('touchstart', (event) => this.openAsideMenu(event));
-  
-      this.closeBtn.addEventListener('click', (event) => this.closeAsideMenu(event));
-      this.closeBtn.addEventListener('touchstart', (event) => this.closeAsideMenu(event));
+      this.dropBtn.addEventListener('click', (event) => this.drop(event));
   
       this.soundOnBtns.forEach(btn => btn.addEventListener('click', (event) => this.turnOnTheSound(event)));
       this.soundOnBtns.forEach(btn => btn.addEventListener('touchstart', (event) => this.turnOnTheSound(event)));
   
       this.soundOffBtns.forEach(btn => btn.addEventListener('click', (event) => this.turnOffTheSound(event)));
       this.soundOffBtns.forEach(btn => btn.addEventListener('touchstart', (event) => this.turnOffTheSound(event)));
+
     }
-  
+
     startPlay(event) {
       event.preventDefault();
       cancelAnimationFrame(this.gameReq);
@@ -579,5 +566,137 @@ function createGame(){
   
 };
 
-window.addEventListener('load', createGame);
+class App {
+  constructor(containerElem){
+    this.containerElem = null;
+    this.SPAState = {};
+
+    window.addEventListener('hashchange', () => this.switchToStateFromURLHash());
+   
+  }
+
+  switchToStateFromURLHash() {
+    const URLHash = window.location.hash;
+    const stateStr = URLHash.substr(1);
+
+    if (stateStr!="") { 
+      this.SPAState = { pagename: stateStr};
+    } else {
+      this.SPAState = { pagename: 'Main'}; 
+    }
+    
+    switch (this.SPAState.pagename) {
+      case 'Main':
+        this.createMainPage();
+        break;
+      case 'Game':
+        this.createGamePage();
+        break;
+      case 'Rules':
+      
+        break;
+      case 'Recordes':
+
+        break;
+    }
+  }
+
+ switchToState(newState) {
+    const stateStr = newState.pagename;
+    location.hash = stateStr;
+  }
+  
+  createGamePage() {
+    const containerElem = this.createElem('div','container');
+    document.body.appendChild(containerElem);
+
+    const gameWrapper = this.createElem('div','game-wrapper');
+
+    const buttons = this.createElem('div','buttons');
+    const tetris = this.createElem('div','tetris');
+    const info = this.createElem('div','info');
+    const gameWrapperChildren = [buttons, tetris, info];
+    this.addChildren(gameWrapperChildren,  gameWrapper);
+
+    const playBtnInnerHTML = '<span>Play</span><svg><use xlink:href="assets/sprites.svg#power"/></svg>';
+    const pauseBtnInnerHTML = '<span class="btn-text">Pause</span><svg><use class="pause-svg" xlink:href="assets/sprites.svg#pause"/></svg>';
+    const dropBtnInnerHTML = '<svg><use xlink:href="assets/sprites.svg#drop"/></svg>';
+    const playBtn = this.createElem('button','play btn', playBtnInnerHTML);
+    const pauseBtn = this.createElem('button','pause btn', pauseBtnInnerHTML);
+    const dropBtn = this.createElem('button','drop btn', dropBtnInnerHTML);
+    const soundsBtn = this.createElem('div','sound-btns');
+    const buttonsChildren = [playBtn, pauseBtn, dropBtn, soundsBtn];
+    this.addChildren(buttonsChildren, buttons);
+
+    const soundONInnerHTML = '<svg><use xlink:href="assets/sprites.svg#sound-on"/></svg>';
+    const soundOffInnerHTML = '<svg><use xlink:href="assets/sprites.svg#sound-off"/></svg>';
+    const soundON =  this.createElem('button','sound-on sound-btn active', soundONInnerHTML);
+    const soundOff =  this.createElem('button','sound-off sound-btn', soundOffInnerHTML);
+    const soundsBtnChildren = [soundON, soundOff];
+    this.addChildren(soundsBtnChildren, soundsBtn);
+
+    const gameOver =  this.createElem('div','game-over', 'Game Over');
+    tetris.appendChild(gameOver);
+    
+    const infoScoreRow = this.createElem('div','output');
+    const scoreIcon = this.createElem('div','icon', '<svg><use xlink:href="assets/sprites.svg#star"/></svg>');
+    const score = this.createElem('div','score', '0');
+    this.addChildren([scoreIcon, score], infoScoreRow);
+
+    const infoLevelRow = this.createElem('div','output');
+    const levelIcon = this.createElem('div','icon', '<svg><use xlink:href="assets/sprites.svg#trophy"></svg>');
+    const level = this.createElem('div','level', '0');
+    this.addChildren([levelIcon, level],  infoLevelRow);
+
+    this.addChildren([infoScoreRow, infoLevelRow],  info);
+
+    containerElem.appendChild(gameWrapper);
+
+    createGame();
+
+  }
+
+  createMainPage() {
+    const containerElem = this.createElem('div','container');
+    document.body.appendChild(containerElem);
+    const menu = this.createElem('div', 'menu');
+    const title = this.createElem('h1', 'title', 'Tetris');
+    const newGame = this.createElem('button', 'menu-btn', 'New Game');
+    newGame.addEventListener('click', () => this.switchToState({pagename: 'Game'}));
+    const rules = this.createElem('button', 'menu-btn', 'Rules');
+    const recordes = this.createElem('button', 'menu-btn', 'Recordes');
+    const elements = [title, newGame, rules, recordes];
+    this.addChildren(elements, menu);
+    containerElem.appendChild(menu);
+  }
+  
+  createElem(elem, styleClass, value) {
+    const HTMLelem = document.createElement(elem);
+    if (styleClass) {
+      HTMLelem.className = styleClass;
+    }
+    if (value) {
+      HTMLelem.innerHTML = value;
+    }
+    return HTMLelem;
+  }
+
+  addChildren(arr, parentElem) {
+    arr.forEach(elem => parentElem.appendChild(elem));
+  }
+
+  createRecordesPage() {
+  
+  }
+
+  createRulesPage() {
+    
+  }
+
+
+}
+
+const terisApp = new App("container");
+terisApp.switchToStateFromURLHash();
+
 
