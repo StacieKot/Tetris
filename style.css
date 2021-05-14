@@ -734,6 +734,13 @@ body {
   margin: 0 auto;
 }
 
+@media only all and (max-width: 450px) {
+  .record-table {
+    width: 100%;
+    font-size: 20px;
+  }
+}
+
 .score-position {
   -webkit-box-flex: 0;
       -ms-flex: 0 0 10%;
@@ -742,16 +749,16 @@ body {
 }
 
 .user-name {
-  -webkit-box-flex: 1;
-      -ms-flex: 1 0 60%;
-          flex: 1 0 60%;
+  -webkit-box-flex: 0;
+      -ms-flex: 0 0 60%;
+          flex: 0 0 60%;
   text-align: center;
   margin-bottom: 10px;
 }
 
 .user-score {
   -webkit-box-flex: 0;
-      -ms-flex: 0 1 30%;
-          flex: 0 1 30%;
+      -ms-flex: 0 0 30%;
+          flex: 0 0 30%;
   text-align: center;
 }
