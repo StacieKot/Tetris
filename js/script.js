@@ -578,7 +578,11 @@
       this.canvas = null;
       this.context = null;
       this.xxx = false;
-      this.user = JSON.parse(localStorage.tetris).userName || 'Player';
+      if (localStorage.tetris) {
+        this.user = JSON.parse(localStorage.tetris).userName;
+      } else {
+        this.user = 'Player';
+      }
       window.addEventListener('hashchange', () => this.switchToStateFromURLHash());
     }
   
