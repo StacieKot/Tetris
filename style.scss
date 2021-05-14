@@ -37,11 +37,8 @@ body {
 .container {
   background: url(assets/background.png);
   background-size: cover;
-  height: 100vh;
+  min-height: 100vh;
   position: relative;
-  @media only all and (max-width: $tablet) {
-   max-height: 100vh;
-  }
 }
 
 .game-wrapper {
@@ -106,6 +103,7 @@ body {
     display: flex;
     align-items: stretch;
     margin: 10px 0 40px 20px;
+    overflow: hidden;
 
     .icon {
       flex: 0 0 50px;
@@ -155,13 +153,12 @@ body {
   flex: 1 1 auto;
   line-height: 70px;
 
- 
   @media only all and (max-width: $tablet) {
     line-height: 50px;
   }
  }
  
- .level {
+.level {
    transition: font-size 0.5s ease-out;
    flex: 1 1 auto;
    line-height: 70px;
@@ -169,7 +166,7 @@ body {
    @media only all and (max-width: $tablet) {
     line-height: 50px;
     }
-  }
+ }
 
 .buttons {
   display: flex;
@@ -316,16 +313,9 @@ body {
   }
 }
 
-.recordes {
-  
-}
-
 .active-score {
   color: rgb(255, 202, 57);
-  transform: scale(1.5);
-  @media only all and (max-width: $tablet) {
-    transform: scale(1.25);
-  }
+  transform: scale(1.25);
 }
 
 .sound-btns {
@@ -344,26 +334,96 @@ body {
   
 }
 
-.registration-form {
-  position: absolute;
-  width: 500px;
-  z-index: 10;
-  left: 50%;
-  top: 50%;
- transform: translate(-50%, -50%);
- background: linear-gradient(135deg, rgba(226,251,244,1) 0% 45%, rgba(251,230,249, 1) 45% 100%);
- border-radius: 10px;
- padding: 80px 75px 120px 75px; 
- font-family: 'Share Tech Mono', monospace;
- color: #696f73;
- font-size: 26px;
- box-shadow: 5px 5px 5px -5px rgba(34, 60, 80, 0.6);
+.reg-form {
+  display: flex;
+  justify-content: space-between;
+  margin: 20px auto 0 auto;
+  border: 1px solid white;
+  width: 60%;
 
   @media only all and (max-width: 700px) {
     width: 80%;
-    padding: 50px 5% 70px 5%; 
   }
 
+  @media only all and (max-width: 400px) {
+    width: 100%;
+  }
+
+
+}
+
+.submitted {
+    border: none;
+    margin-top: 10px;
+    margin-bottom: -10px;
+
+    .reg-btn {
+      display: none;
+    }
+
+    .reg-input {
+      text-align: center;
+      font-size: 22px;
+      cursor: pointer;
+      &::placeholder {
+        font-size: 22px;
+      }
+    }
+}
+
+.reg-label {
+  font-family: 'Share Tech Mono', monospace;
+  text-align: center;
+  display: block;
+  color: white;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.reg-input {
+  background-color: transparent;
+  outline: none;
+  border: none;
+  display: block;
+  padding: 13px 10px 10px 20px;
+  flex: 1 1 0px;
+  color: #a264ac;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 18px;
+  &::placeholder {
+    color: #a264ac;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 18px;
+  }
+
+  @media only all and (max-width: 700px) {
+    flex: 0 0 150px;
+    width: 150px;
+  }
+}
+
+.reg-btn {
+  border: none;
+  outline: none;
+  background-color: transparent;
+  flex: 0 0 50px;
+  position: relative;
+  svg {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    fill: white;
+    width: 20px;
+    height: 30px;
+  }
+
+
+  &:hover {
+    svg {
+      fill: #a264ac;
+    }
+  }
 }
 
 .nickname-label {
@@ -408,48 +468,6 @@ body {
   }
 }
 
-.notvisible {
-  transition: transform 0.5s ease-out;
-  z-index: -1;
-  visibility: hidden;
-  transform: scale(0);
-}
-
-.notscrollable {
-  overflow: hidden;
-}
-
-.menu-burger {
-  display: none;
-  position: absolute;
-  z-index: 5;
-  left: 5px;
-  top: 5px;
-  width: 50px;
-  height: 43px;
-
-  >span {
-    position: absolute;
-    width: 50px;
-    height: 5px;
-    background: linear-gradient(90deg, rgba(8,177,95, 1), rgb(4, 152, 179));
-    box-shadow: 1px 1px 1px -1px rgba(2, 2, 2, 0.6);
-    border-radius: 2px;
-  }
-
-  >span:nth-child(2) {
-    top: 19px;
-  }
-
-  >span:nth-child(3) {
-    top: 38px;
-  }
-
-  @media only all and (max-width: $tablet) {
-    display: block;
-  }
-}
-
 .popup {
   position: absolute;
   left: 50%;
@@ -490,10 +508,19 @@ body {
   }
 
   @media only all and (max-width: $tablet) {
+    position: static;
+    margin: 0 auto;
+    transform: translate(0,0);
     width: 90%;
     min-height: 300px;
   }
 
+}
+
+.mob-container {
+  @media only all and (max-width: $tablet) {
+  padding: 20vh 0;
+  }
 }
 
 .menu {
@@ -511,6 +538,7 @@ body {
     color: white;
     font-family: 'Share Tech Mono', monospace;
     margin-bottom: 20px;
+    cursor: pointer;
    
     &:hover,
     &:active {
@@ -556,4 +584,28 @@ body {
   }
 }
 
+.record-table {
+display: flex;
+color: white;
+font-family: 'Share Tech Mono', monospace;
+flex-wrap: wrap;
+font-size: 24px;
+width: 80%;
+margin: 0 auto;
+}
 
+.score-position {
+  flex: 0 0 10%;
+  text-align: left;
+}
+
+.user-name {
+  flex: 1 0 60%;
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+.user-score {
+  flex: 0 1 30%;
+  text-align: center;
+}
