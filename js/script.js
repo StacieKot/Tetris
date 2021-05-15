@@ -329,7 +329,6 @@ function createApp() {
         this.board.clearFullRows();
         if (this.board.fullRowsNum) {
           this.playAudio(this.audioClearRows);
-          window.navigator.vibrate([400, 150, 400, 150, 400, 150, 400, 150, 400, 150]);
           this.updateScore();
           this.updateLevel();
         }
