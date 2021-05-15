@@ -772,10 +772,12 @@ function createApp() {
       const arrowBack = this.createElem('button','arrow-back', '<svg><use xlink:href="assets/sprites.svg#arrow-back"/></svg>');
       this.addChildren([title, recordTable, arrowBack], recordesHTMLElem);
       score.forEach((elem, index) => {
+        const scoreContainer = this.createElem('div', 'score-container');
         const scorePos = this.createElem('div','score-position', `${index+1}.`);
         const userName = this.createElem('div','user-name', elem.name);
         const userScore = this.createElem('div','user-score', elem.score);
-        this.addChildren([scorePos, userName, userScore], recordTable);
+        this.addChildren([scoreContainer], recordTable);
+        this.addChildren([scorePos, userName, userScore], scoreContainer);
       })
       arrowBack.addEventListener('click', () => this.switchToState({pagename: 'Main'}));
       arrowBack.addEventListener('touchstart', () => this.switchToState({pagename: 'Main'}));

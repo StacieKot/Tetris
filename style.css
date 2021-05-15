@@ -745,13 +745,8 @@ body {
 }
 
 .record-table {
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
   color: white;
   font-family: 'Share Tech Mono', monospace;
-  -ms-flex-wrap: wrap;
-      flex-wrap: wrap;
   font-size: 24px;
   width: 80%;
   margin: 0 auto;
@@ -764,17 +759,25 @@ body {
   }
 }
 
+.score-container {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-wrap: wrap;
+      flex-wrap: wrap;
+}
+
 .score-position {
   -webkit-box-flex: 0;
-      -ms-flex: 0 0 10%;
-          flex: 0 0 10%;
+      -ms-flex: 0 0 40px;
+          flex: 0 0 40px;
   text-align: left;
 }
 
 .user-name {
   -webkit-box-flex: 0;
-      -ms-flex: 0 0 60%;
-          flex: 0 0 60%;
+      -ms-flex: 0 0 calc(60% - 40px);
+          flex: 0 0 calc(60% - 40px);
   text-align: center;
   margin-bottom: 10px;
 }
