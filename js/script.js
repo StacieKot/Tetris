@@ -890,5 +890,5 @@ function createApp() {
   window.addEventListener('resize', () => terisApp.recalculateBlockSize());
 }
 
-window.addEventListener('DOMContentLoaded', createApp);
+window.addEventListener('load', createApp);
 

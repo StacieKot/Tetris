@@ -125,13 +125,8 @@ body {
     flex-wrap: wrap;
 
     .output {
-      margin: 60px 10px 20px 0;
+      margin: 60px 0 20px 10px;
       flex: 0 0 140px;
-
-      &:nth-child(2) {
-        margin-right: 0;
-        margin-left: 10px
-      }
 
       .icon {
         flex: 0 0 30px;
@@ -146,12 +141,24 @@ body {
 
   }
 
-  @media only all and (max-width: 300px) {
+  @media only all and (max-width: 450px) {
     .output {
       &:first-child {
-        margin-top: 60px;
+        padding-left: 30px;
+        flex-basis: 170px;
       }
-      margin: 20px 10px 0 10px;
+    }
+  }
+
+  @media only all and (max-width: 330px) {
+    .output {
+      &:first-child {
+        padding-left: 0;
+      }
+      flex-basis: 170px;
+      &:nth-child(2) {
+        margin-top: 0;
+      }
     }
   }
  
