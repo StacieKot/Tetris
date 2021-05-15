@@ -1,6 +1,6 @@
 'use strict';
 
-(function createApp() {
+function createApp() {
 
   const boardSettings = {
     columns : 10,
@@ -129,6 +129,10 @@
       this.image.width = 40;
       this.image.height = 40;
     }
+
+    updateContext(ctx) {
+      this.context = ctx;
+    }
   
     draw() {
       this.shape.forEach( (row, y) => {
@@ -184,6 +188,7 @@
       this.point = 100;
       this.fullRowsNum = null;
       this.onPause = false;
+      this.gameIsOn = false;
       this.level = 1;
       this.eventCodes = {
         'ArrowLeft' : tetr => ({ ...tetr, x: tetr.x - tetr.speedX }),
@@ -194,10 +199,9 @@
       };
       this.audioClearRows = new Audio('assets/audio/clear.rf64');
       this.audioMove = new Audio('assets/audio/sounds_block-rotate.mp3');
-      this.audioMove.setAttribute('preload', 'auto');
-      this.audioMoveDown = new Audio('assets/audio/selection.rf64');
       this.audioGameOver = new Audio('assets/audio/gameover.rf64');
       this.audioDrop = new Audio('assets/audio/drop.mp3');
+      this.audioClick = new Audio('assets/audio/click.mp3');
       this.audioIsON = 'on';
       this.levelsScore = 1000;
       this.levelsTimer = {
@@ -265,39 +269,43 @@
       this.board.activeTetramino = null;
       this.gameReq = null;
       this.onPause = false;
-      this.pauseBtnCont.innerHTML = 'Pause';
-      this.pauseBtn.querySelector('.pause-svg').setAttribute('xlink:href', 'assets/sprites.svg#pause');
       this.level = 1;
       this.score = 0;
       this.timer = 32;
-      this.scoreElem.innerHTML = this.score;
-      this.levelElem.innerHTML = this.level;
-      this.gameOver.classList.remove('game-over-active');
       this.count = 0;
       this.touchmoveCounter = 0;
       this.board.reset();
-      this.context.clearRect(0, 0, this.context.canvas.width, this.context.canvas.height);  
+      this.gameIsOn = false;
+      this.dropCount = 0;
     }
   
     startPlay(event) {
       event.preventDefault();
+      this.playAudio(this.audioClick);
       this.removePlaySett();
+      this.pauseBtnCont.innerHTML = 'Pause';
+      this.pauseBtn.querySelector('.pause-svg').setAttribute('xlink:href', 'assets/sprites.svg#pause');
+      this.scoreElem.innerHTML = this.score;
+      this.levelElem.innerHTML = this.level;
+      this.gameOver.classList.remove('game-over-active');
+      this.context.clearRect(0, 0, this.context.canvas.width, this.context.canvas.height);  
       this.createNewTetramino();
+      this.gameIsOn = true;
       this.animateGame();
     }
   
     moveTetramino(event) {
-      if(!this.eventCodes[event.code] || this.onPause) return;
+      if(!this.eventCodes[event.code] || this.onPause || !this.gameIsOn) return;
       event.preventDefault();
       let newPosition = this.eventCodes[event.code](this.board.activeTetramino);
-      console.log(this.board.activeTetramino);
-      console.log(this.board);
       if (event.code === 'Space') {
+        if (this.dropCount < this.timer) return;
         while (this.board.validatePos(newPosition)) {
           this.board.activeTetramino.updatePos(newPosition);
           newPosition = this.eventCodes[event.code](this.board.activeTetramino);
         }
         this.playAudio(this.audioDrop);
+        this.dropCount = 0;
       } else {
         if (this.board.validatePos(newPosition)) {
           this.board.activeTetramino.updatePos(newPosition);
@@ -317,9 +325,11 @@
           return false;
         }
         this.board.saveSett();
+        this.board.activeTetramino = null;
         this.board.clearFullRows();
         if (this.board.fullRowsNum) {
           this.playAudio(this.audioClearRows);
+          window.navigator.vibrate(200);
           this.updateScore();
           this.updateLevel();
         }
@@ -330,7 +340,7 @@
   
     handleTouch(event) {
       event.preventDefault();
-      if (!this.board.activeTetramino) return;
+      if (!this.gameIsOn || this.onPause) return;
       this.touchmoveEventX.push(event.targetTouches[0].pageX);
       this.touchmoveEventY.push(event.targetTouches[0].pageY);
   
@@ -356,13 +366,14 @@
   
     drop(event) {
       event.preventDefault();
-      if(!this.board.activeTetramino) return;
+      if(!this.gameIsOn || this.onPause || this.dropCount < this.timer) return;
       let newPosition = this.eventCodes['Space'](this.board.activeTetramino);
       while (this.board.validatePos(newPosition)) {
         this.board.activeTetramino.updatePos(newPosition);
         newPosition = this.eventCodes['Space'](this.board.activeTetramino);
       }
       this.playAudio(this.audioDrop);
+      this.dropCount = 0;
     }
   
     saveTouchSett(event) {
@@ -372,7 +383,7 @@
   
     rotateActiveTetramino(event) {
       event.preventDefault();
-      if (!this.board.activeTetramino) return;
+      if (!this.gameIsOn || this.onPause) return;
       this.touchСoordinates.touchEndX = event.changedTouches[0].pageX;
       this.touchСoordinates.touchEndY = event.changedTouches[0].pageY;
       if (Math.abs(this.touchСoordinates.touchEndX - this.touchСoordinates.touchStartX) <= boardSettings.blockSize &&
@@ -439,6 +450,7 @@
       this.board.activeTetramino.draw();
       this.board.drawBoardGrid();
       this.count++;
+      this.dropCount++;
       this.gameReq = requestAnimationFrame(() => {
         this.animateGame();
       });   
@@ -449,6 +461,7 @@
       this.playAudio(this.audioGameOver);
       this.saveScore();
       this.score = 0;
+      this.gameIsOn = false;
     }
   
     updateScore() {
@@ -475,6 +488,7 @@
     pauseGame(event) {
       event.preventDefault();
       if (!this.board.activeTetramino) return;
+      this.playAudio(this.audioClick);
       const pauseSvg = this.pauseBtn.querySelector('.pause-svg');
       if(!this.onPause) {
         this.board.activeTetramino.speedY = 0;
@@ -546,8 +560,7 @@
   
       fetch(this.ajaxHandlerScript, { method: 'post', body: sp })
           .then( response => response.json() )
-          .then( data => this.lockGetReady(data))
-          .catch( error => {console.error(error)} );
+          .then( data => this.lockGetReady(data));
     }
   
     lockGetReady(data) {
@@ -559,10 +572,7 @@
       sp.append('v', JSON.stringify(gameStorage));
       sp.append('p', this.updatePassword);
   
-      fetch(this.ajaxHandlerScript, { method: 'post', body: sp })
-          .then( response => response.json() )
-          .then( data => {console.log(data)} )
-          .catch( error => { console.error(error); } );
+      fetch(this.ajaxHandlerScript, { method: 'post', body: sp });
   
     }
   
@@ -578,12 +588,21 @@
       this.canvas = null;
       this.context = null;
       this.xxx = false;
+      this.gameState = {
+        'activeTetramino' : this.board.activeTetramino,
+        'sound' : this.game.audioIsON,
+        'onPause' : this.game.onPause,
+        'score' : this.game.score,
+        'level' : this.game.level
+      }
+
       if (localStorage.tetris) {
         this.user = JSON.parse(localStorage.tetris).userName;
       } else {
         this.user = 'Player';
       }
       window.addEventListener('hashchange', () => this.switchToStateFromURLHash());
+      window.addEventListener('beforeunload', (event) => this.showPreventMessage(event));
     }
   
     getAppStorage() {
@@ -594,10 +613,10 @@
       return fetch(this.ajaxHandlerScript, { method: 'post', body: sp })
           .then( response => response.json() )
           .then( data => JSON.parse(data.result))
-          .catch( error => {console.error(error)} );
     }
   
     switchToStateFromURLHash() {
+      this.saveGameSettings();
       this.canvas = null;
       const URLHash = window.location.hash;
       const stateStr = URLHash.substr(1);
@@ -628,6 +647,16 @@
       const stateStr = newState.pagename;
       location.hash = stateStr;
     }
+
+    saveGameSettings() {
+      this.gameState.activeTetramino = this.board.activeTetramino;
+      this.gameState.sound = this.game.audioIsON;
+      this.gameState.onPause = this.game.onPause;
+      this.gameState.score = this.game.score;
+      this.gameState.level = this.game.level;
+      cancelAnimationFrame(this.game.gameReq);
+      this.game.gameReq = null;
+    }
     
     createGamePage() {
       document.body.innerHTML = '';
@@ -637,35 +666,44 @@
       const buttons = this.createElem('div','buttons');
       const tetris = this.createElem('div','tetris');
       const info = this.createElem('div','info');
-      const gameWrapperChildren = [buttons, tetris, info];
+      const arrowBack = this.createElem('button','arrow-back', '<svg><use xlink:href="assets/sprites.svg#arrow-back"/></svg>');
+      const gameWrapperChildren = [buttons, tetris, info, arrowBack];
       this.addChildren(gameWrapperChildren,  gameWrapper);
       const playBtnInnerHTML = '<span>Play</span><svg><use xlink:href="assets/sprites.svg#power"/></svg>';
-      const pauseBtnInnerHTML = '<span class="btn-text">Pause</span><svg><use class="pause-svg" xlink:href="assets/sprites.svg#pause"/></svg>';
+      const pauseBtnInnerHTML =  this.gameState.onPause ? 
+      '<span class="btn-text">Resume</span><svg><use class="pause-svg" xlink:href="assets/sprites.svg#play"/></svg>' :
+      '<span class="btn-text">Pause</span><svg><use class="pause-svg" xlink:href="assets/sprites.svg#pause"/></svg>' ;
+      const pauseBtnStyles = this.gameState.onPause ? 'pause btn onpause' : 'pause btn';
       const dropBtnInnerHTML = '<svg><use xlink:href="assets/sprites.svg#drop"/></svg>';
       const playBtn = this.createElem('button','play btn', playBtnInnerHTML);
-      const pauseBtn = this.createElem('button','pause btn', pauseBtnInnerHTML);
+      const pauseBtn = this.createElem('button', pauseBtnStyles, pauseBtnInnerHTML);
       const dropBtn = this.createElem('button','drop btn', dropBtnInnerHTML);
       const soundsBtn = this.createElem('div','sound-btns');
       const buttonsChildren = [playBtn, pauseBtn, dropBtn, soundsBtn];
       this.addChildren(buttonsChildren, buttons);
       const soundONInnerHTML = '<svg><use xlink:href="assets/sprites.svg#sound-on"/></svg>';
       const soundOffInnerHTML = '<svg><use xlink:href="assets/sprites.svg#sound-off"/></svg>';
-      const soundON =  this.createElem('button','sound-on sound-btn active', soundONInnerHTML);
+      const soundON =  this.createElem('button','sound-on sound-btn', soundONInnerHTML);
       const soundOff =  this.createElem('button','sound-off sound-btn', soundOffInnerHTML);
+      this.gameState.sound === 'on' ? soundON.classList.add('active') : soundOff.classList.add('active');
       const soundsBtnChildren = [soundON, soundOff];
       this.addChildren(soundsBtnChildren, soundsBtn);
       const gameOver =  this.createElem('div','game-over', 'Game Over');
       tetris.appendChild(gameOver);
       const infoScoreRow = this.createElem('div','output');
       const scoreIcon = this.createElem('div','icon', '<svg><use xlink:href="assets/sprites.svg#star"/></svg>');
-      const score = this.createElem('div','score', '0');
+      const score = this.createElem('div','score', `${this.gameState.score}`);
       this.addChildren([scoreIcon, score], infoScoreRow);
       const infoLevelRow = this.createElem('div','output');
       const levelIcon = this.createElem('div','icon', '<svg><use xlink:href="assets/sprites.svg#trophy"></svg>');
-      const level = this.createElem('div','level', '0');
+      const level = this.createElem('div','level', this.gameState.level);
       this.addChildren([levelIcon, level],  infoLevelRow);
       this.addChildren([infoScoreRow, infoLevelRow],  info);
       containerElem.appendChild(gameWrapper);
+
+      arrowBack.addEventListener('click', () => this.switchToState({pagename: 'Main'}));
+      arrowBack.addEventListener('touchstart', () => this.switchToState({pagename: 'Main'}));
+
       boardSettings.blockSize = this.calculateBlockSize();
       this.canvas = document.createElement('canvas');
       this.context = this.canvas.getContext('2d');
@@ -676,8 +714,15 @@
       this.board.updateContext(this);
       this.game.updateApp(this);
       this.game.addListeners();
-      this.game.removePlaySett();
-
+      this.game.audioIsON = this.gameState.sound;
+      this.game.onPause = this.gameState.onPause;
+      if(this.game.gameIsOn) {
+        this.game.activeTetramino = this.gameState.activeTetramino;
+        this.game.activeTetramino.updateContext(this.context);
+        this.game.gameReq = requestAnimationFrame(() => {
+          this.game.animateGame();
+        }); 
+      }
     }
   
     createMainPage() {
@@ -709,15 +754,20 @@
       regSubmitBtn.addEventListener('touchstart', (event) => this.submitReg(event));
       regInput.addEventListener('click', (event) => this.activateForm(event));
       regInput.addEventListener('touchstart', (event) => this.activateForm(event));
-  
-      newGame.addEventListener('click', () => this.switchToState({pagename: 'Game'}));
-      newGame.addEventListener('touchstart', () => this.switchToState({pagename: 'Game'}));
+      newGame.addEventListener('click', () => this.switchToNewGame());
+      newGame.addEventListener('touchstart', () => this.switchToNewGame());
       rules.addEventListener('click', () => this.switchToState({pagename: 'Rules'}));
       rules.addEventListener('touchstart', () => this.switchToState({pagename: 'Rules'}));
       recordes.addEventListener('click', () => this.switchToState({pagename: 'Recordes'}));
       recordes.addEventListener('touchstart', () => this.switchToState({pagename: 'Recordes'}));
   
       containerElem.appendChild(menu);
+    }
+
+    switchToNewGame() {
+      this.game.removePlaySett();
+      this.saveGameSettings();
+      this.switchToState({pagename: 'Game'})
     }
   
     createRecordesPage(result) {
@@ -730,13 +780,16 @@
       const recordesHTMLElem = this.createElem('div', 'recordes popup');
       const title = this.createElem('h1', 'title', 'Recordes');
       const recordTable = this.createElem('div', 'record-table');
-      this.addChildren([title, recordTable], recordesHTMLElem);
+      const arrowBack = this.createElem('button','arrow-back', '<svg><use xlink:href="assets/sprites.svg#arrow-back"/></svg>');
+      this.addChildren([title, recordTable, arrowBack], recordesHTMLElem);
       score.forEach((elem, index) => {
         const scorePos = this.createElem('div','score-position', `${index+1}.`);
         const userName = this.createElem('div','user-name', elem.name);
         const userScore = this.createElem('div','user-score', elem.score);
         this.addChildren([scorePos, userName, userScore], recordTable);
       })
+      arrowBack.addEventListener('click', () => this.switchToState({pagename: 'Main'}));
+      arrowBack.addEventListener('touchstart', () => this.switchToState({pagename: 'Main'}));
       containerElem.appendChild(recordesHTMLElem);
     }
   
@@ -753,7 +806,10 @@
       const subtitleMob = this.createElem('h2', 'subtitle', 'For mobiles');
       const mobileRulesInnerHtml = '<div class="rules-row">Touch the play area to rotate the tetrimino</div><div class="rules-row">To move the tetromino touch the play area and move in respective direction</div><div class="rules-row">Touch the DOWN button to drop the tetromino</div>';
       const mobileRules = this.createElem('div', 'rules', mobileRulesInnerHtml);
-      this.addChildren([title, objective, subtitleDesk, desktopRules, subtitleMob, mobileRules], rulesHTMLElem);
+      const arrowBack = this.createElem('button','arrow-back', '<svg><use xlink:href="assets/sprites.svg#arrow-back"/></svg>');
+      this.addChildren([title, objective, subtitleDesk, desktopRules, subtitleMob, mobileRules, arrowBack], rulesHTMLElem);
+      arrowBack.addEventListener('click', () => this.switchToState({pagename: 'Main'}));
+      arrowBack.addEventListener('touchstart', () => this.switchToState({pagename: 'Main'}));
       containerElem.appendChild(rulesHTMLElem);
     }
   
@@ -804,11 +860,16 @@
       const gameWrapPaddingTop = parseInt(rootStyles.getPropertyValue('--game-wrapper-paddingTop'));
       const tetrisPadding =  parseInt(rootStyles.getPropertyValue('--tetris-padding'));
       if (window.matchMedia("(max-width:850px)").matches) {
+        const windowWidth = document.documentElement.clientWidth;
         const info = document.querySelector('.info');
         const btnContainer = document.querySelector('.buttons');
         const infoHeight = parseInt(window.getComputedStyle(info).getPropertyValue("height"));
         const btnContainerHeight = parseInt(window.getComputedStyle(btnContainer).getPropertyValue("height"));
-        return Math.floor((windowHeight - infoHeight - btnContainerHeight - (gameWrapPaddingTop + tetrisPadding) * 2)/boardSettings.rows);
+        let blockSize = Math.floor((windowHeight - infoHeight - btnContainerHeight - (gameWrapPaddingTop + tetrisPadding) * 2)/boardSettings.rows);
+        if (blockSize * boardSettings.columns + tetrisPadding * 3 > windowWidth) {
+          blockSize = (windowWidth - tetrisPadding * 3) / boardSettings.columns;
+        }
+        return blockSize;
       } else {
        return Math.floor((windowHeight - (gameWrapPaddingTop + tetrisPadding) * 2)/ boardSettings.rows) ;
       }
@@ -817,9 +878,16 @@
     recalculateBlockSize() {
       if(this.canvas) {
         boardSettings.blockSize = this.calculateBlockSize();
-        console.log(boardSettings.blockSize);
         this.canvas.width = boardSettings.columns * boardSettings.blockSize;
         this.canvas.height = boardSettings.rows * boardSettings.blockSize;
+      }
+    }
+
+    showPreventMessage(event) {
+      if(window.location.hash === '#Game' && this.gameIsOn) {
+        const dialogText = 'Are you sure you want to leave this page?';
+        event.returnValue = dialogText;
+        return dialogText;
       }
     }
 
@@ -832,7 +900,7 @@
 
   window.addEventListener('resize', () => terisApp.recalculateBlockSize());
   
-})();
+}
 
-
+window.addEventListener('DOMContentLoaded', createApp);
 
