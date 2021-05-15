@@ -163,7 +163,7 @@ body {
         flex-wrap: wrap;
   }
   .info .output {
-    margin: 43px 10px 20px 0;
+    margin: 60px 10px 20px 0;
     -webkit-box-flex: 0;
         -ms-flex: 0 0 140px;
             flex: 0 0 140px;
@@ -180,6 +180,15 @@ body {
   .info .output .icon > svg {
     width: 30px;
     height: 50px;
+  }
+}
+
+@media only all and (max-width: 300px) {
+  .info .output {
+    margin: 20px 10px 0 10px;
+  }
+  .info .output:first-child {
+    margin-top: 60px;
   }
 }
 

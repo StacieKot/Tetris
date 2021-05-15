@@ -329,7 +329,7 @@ function createApp() {
         this.board.clearFullRows();
         if (this.board.fullRowsNum) {
           this.playAudio(this.audioClearRows);
-          window.navigator.vibrate(200);
+          window.navigator.vibrate([130, 50, 130]);
           this.updateScore();
           this.updateLevel();
         }
