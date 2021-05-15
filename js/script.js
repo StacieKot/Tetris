@@ -649,7 +649,7 @@ function createApp() {
     
     createGamePage() {
       document.body.innerHTML = '';
-      const containerElem = this.createElem('div','container');
+      const containerElem = this.createElem('div','container visibilityhidden');
       document.body.appendChild(containerElem);
       const gameWrapper = this.createElem('div','game-wrapper');
       const buttons = this.createElem('div','buttons');
@@ -712,11 +712,12 @@ function createApp() {
           this.game.animateGame();
         }); 
       }
+      containerElem.classList.remove('visibilityhidden');
     }
   
     createMainPage() {
       document.body.innerHTML = '';
-      const containerElem = this.createElem('div','container mob-container');
+      const containerElem = this.createElem('div','container mob-container visibilityhidden');
       document.body.appendChild(containerElem);
       const menu = this.createElem('div', 'menu popup');
       const title = this.createElem('h1', 'title', 'Tetris');
@@ -751,6 +752,7 @@ function createApp() {
       recordes.addEventListener('touchstart', () => this.switchToState({pagename: 'Recordes'}));
   
       containerElem.appendChild(menu);
+      containerElem.classList.remove('visibilityhidden');
     }
 
     switchToNewGame() {
@@ -764,7 +766,7 @@ function createApp() {
       score.sort(this.compareScore);
       score.splice(10, score.length - 1);
       document.body.innerHTML = '';
-      const containerElem = this.createElem('div','container mob-container');
+      const containerElem = this.createElem('div','container mob-container visibilityhidden');
       document.body.appendChild(containerElem);
       const recordesHTMLElem = this.createElem('div', 'recordes popup');
       const title = this.createElem('h1', 'title', 'Recordes');
@@ -782,11 +784,12 @@ function createApp() {
       arrowBack.addEventListener('click', () => this.switchToState({pagename: 'Main'}));
       arrowBack.addEventListener('touchstart', () => this.switchToState({pagename: 'Main'}));
       containerElem.appendChild(recordesHTMLElem);
+      containerElem.classList.remove('visibilityhidden');
     }
   
     createRulesPage() {
       document.body.innerHTML = '';
-      const containerElem = this.createElem('div','container mob-container');
+      const containerElem = this.createElem('div','container mob-container visibilityhidden');
       document.body.appendChild(containerElem);
       const rulesHTMLElem = this.createElem('div', 'rules popup');
       const title = this.createElem('h1', 'title', 'Rules');
@@ -802,6 +805,7 @@ function createApp() {
       arrowBack.addEventListener('click', () => this.switchToState({pagename: 'Main'}));
       arrowBack.addEventListener('touchstart', () => this.switchToState({pagename: 'Main'}));
       containerElem.appendChild(rulesHTMLElem);
+      containerElem.classList.remove('visibilityhidden');
     }
   
     createElem(elem, styleClass, value) {
