@@ -329,7 +329,7 @@ function createApp() {
         this.board.clearFullRows();
         if (this.board.fullRowsNum) {
           this.playAudio(this.audioClearRows);
-          window.navigator.vibrate([300, 100, 300, 100, 300, 300, 100, 300, 100, 300]);
+          window.navigator.vibrate([300, 200, 300, 200, 300, 200, 300, 200, 300]);
           this.updateScore();
           this.updateLevel();
         }
@@ -531,16 +531,6 @@ function createApp() {
       const regForm = document.querySelector('.registration-form');
       this.nickname = regForm.querySelector('.nickname-input').value;
       regForm.classList.add('notvisible');
-    }
-  
-    openAsideMenu(event) {
-      event.preventDefault();
-      this.menu.classList.add('aside-menu-opened');
-    }
-  
-    closeAsideMenu(event) {
-      event.preventDefault();
-      this.menu.classList.remove('aside-menu-opened');
     }
     
     saveScore() {
@@ -884,7 +874,7 @@ function createApp() {
     }
 
     showPreventMessage(event) {
-      if(window.location.hash === '#Game' && this.gameIsOn) {
+      if(window.location.hash === '#Game' && this.game.gameIsOn) {
         const dialogText = 'Are you sure you want to leave this page?';
         event.returnValue = dialogText;
         return dialogText;
@@ -899,7 +889,6 @@ function createApp() {
   terisApp.switchToStateFromURLHash();
 
   window.addEventListener('resize', () => terisApp.recalculateBlockSize());
-  
 }
 
 window.addEventListener('DOMContentLoaded', createApp);
