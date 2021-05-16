@@ -582,11 +582,13 @@ function createApp() {
         'score' : this.game.score,
         'level' : this.game.level
       }
+
       if (localStorage.tetris) {
         this.user = JSON.parse(localStorage.tetris).userName;
       } else {
         this.user = 'Player';
       }
+      
       window.addEventListener('hashchange', () => this.switchToStateFromURLHash());
       window.addEventListener('beforeunload', (event) => this.showPreventMessage(event));
     }
