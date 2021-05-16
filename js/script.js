@@ -582,7 +582,6 @@ function createApp() {
         'score' : this.game.score,
         'level' : this.game.level
       }
-
       if (localStorage.tetris) {
         this.user = JSON.parse(localStorage.tetris).userName;
       } else {
@@ -701,8 +700,6 @@ function createApp() {
       this.board.updateContext(this);
       this.game.updateApp(this);
       this.game.addListeners();
-      this.game.audioIsON = this.gameState.sound;
-      this.game.onPause = this.gameState.onPause;
       if(this.game.gameIsOn) {
         this.game.activeTetramino = this.gameState.activeTetramino;
         this.game.activeTetramino.updateContext(this.context);
