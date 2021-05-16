@@ -405,7 +405,6 @@ function createApp() {
     createNewTetramino() {
       this.tetram = new Tetramino(this.context, gameColors);
       this.board.activeTetramino = this.tetram;
-      this.board.xxx = true;
       this.updateColors();
       this.tetram.randomTetramino();
       this.tetram.draw();
@@ -576,7 +575,6 @@ function createApp() {
       this.game = game;
       this.canvas = null;
       this.context = null;
-      this.xxx = false;
       this.gameState = {
         'activeTetramino' : this.board.activeTetramino,
         'sound' : this.game.audioIsON,
